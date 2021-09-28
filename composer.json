@@ -14,7 +14,9 @@
 	"require": {
 		"php": ">=7.4.0",
 		"ext-curl": "*",
-      	"ext-json": "*"
+      	"ext-json": "*",
+		"symfony/http-client": "^5.3",
+		"psr/http-client": "^1.0"
     },
 	"target-dir": "SumoCoders/DeFactuur",
 	"autoload": {
