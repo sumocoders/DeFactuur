@@ -19,7 +19,7 @@ use Exception;
  * @copyright	Copyright (c), Tijs Verkoyen. All rights reserved.
  * @license		BSD License
  */
-class Factr
+class DeFactuur
 {
     // internal constant to enable/disable debugging
     const DEBUG = false;

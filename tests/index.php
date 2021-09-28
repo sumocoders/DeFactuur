@@ -4,7 +4,7 @@
 require_once '../../../autoload.php';
 require_once 'config.php';
 
-use \SumoCoders\Factr\Factr;
+use \SumoCoders\Factr\DeFactuur;
 use \SumoCoders\Factr\Client\Client;
 use \SumoCoders\Factr\Client\Address;
 use \SumoCoders\Factr\Invoice\Invoice;
@@ -12,7 +12,7 @@ use \SumoCoders\Factr\Invoice\Item;
 use \SumoCoders\Factr\Invoice\Payment;
 
 // create instance
-$factr = new Factr();
+$factr = new DeFactuur();
 $factr->setApiToken(API_TOKEN);
 
 $address = new Address();

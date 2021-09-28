@@ -5,7 +5,7 @@ namespace SumoCoders\Factr\tests;
 require_once __DIR__ . '/../../../autoload.php';
 require_once 'config.php';
 
-use \SumoCoders\Factr\Factr;
+use \SumoCoders\Factr\DeFactuur;
 
 /**
  * test case.
@@ -13,7 +13,7 @@ use \SumoCoders\Factr\Factr;
 class FactrTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var Factr
+     * @var DeFactuur
      */
     private $factr;
 
@@ -23,7 +23,7 @@ class FactrTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         parent::setUp();
-        $this->factr = new Factr();
+        $this->factr = new DeFactuur();
         $this->factr->setApiToken(API_TOKEN);
     }
 
@@ -64,7 +64,7 @@ class FactrTest extends \PHPUnit_Framework_TestCase
     public function testGetUserAgent()
     {
         $this->factr->setUserAgent('testing/1.0.0');
-        $this->assertEquals('PHP DeFactuur/' . Factr::VERSION . ' testing/1.0.0', $this->factr->getUserAgent());
+        $this->assertEquals('PHP DeFactuur/' . DeFactuur::VERSION . ' testing/1.0.0', $this->factr->getUserAgent());
     }
 
     /**
