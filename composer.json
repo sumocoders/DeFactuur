@@ -1,7 +1,7 @@
 {
-	"name": "sumocoders/factr",
+	"name": "sumocoders/defactuur",
 	"type": "library",
-	"description": "PHP Factr is a (wrapper)class to communicate with Factr (http://www.factr.be).",
+	"description": "PHP DeFactuur is a (wrapper)class to communicate with DeFactuur (http://www.factr.be).",
 	"homepage": "https://github.com/sumocoders/Factr",
 	"license": "BSD-2-Clause",
 	"authors": [
@@ -18,6 +18,6 @@
     },
 	"target-dir": "SumoCoders/DeFactuur",
 	"autoload": {
-		"psr-4": {"SumoCoders\\DeFactuur": ""}
+		"psr-4": {"SumoCoders\\DeFactuur\\": "src"}
 	}
 }
