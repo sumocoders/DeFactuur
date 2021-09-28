@@ -10,7 +10,12 @@ use SumoCoders\DeFactuur\Invoice\Mail;
 use SumoCoders\DeFactuur\Invoice\Payment;
 use SumoCoders\DeFactuur\Product\Product;
 use Exception;
+use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\HttpClient\Psr18Client;
+use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 /**
@@ -330,34 +335,28 @@ class DeFactuur
     {
         $url = self::API_URL . '/' . self::API_VERSION . '/account/api_token.json';
 
-        // set options
-        $options = $this->getCurlOptions($url);
-        $options[CURLOPT_HTTPAUTH] = CURLAUTH_BASIC;
-        $options[CURLOPT_USERPWD] = $username . ':' . $password;
+        try {
+            $response = $this->client->request(
+                'GET',
+                $url,
+                [
+                    'auth_basic' => [$username, $password],
+                ]
+            );
 
-        // init
-        $this->curl = curl_init();
+            // check status code
+            if ($response->getStatusCode() != 200) {
+                throw new FactuurException('Could\'t authenticate you');
+            }
 
-        // set options
-        curl_setopt_array($this->curl, $options);
-
-        // execute
-        $response = curl_exec($this->curl);
-        $headers = curl_getinfo($this->curl);
-
-        // check status code
-        if ($headers['http_code'] != 200) {
-            throw new FactuurException('Could\'t authenticate you');
+            // we expect JSON so decode it
+            $json = @json_decode($response->getContent(), true);
+        } catch (TransportExceptionInterface $e) {
+            throw new FactuurException($e->getMessage());
         }
-
-        // we expect JSON so decode it
-        $json = @json_decode($response, true);
 
         // validate json
         if($json === false || !isset($json['api_token'])) throw new FactuurException('Invalid JSON-response');
-
-        // set the token
-        $this->setApiToken($json['api_token']);
 
         // return
         return $json['api_token'];
