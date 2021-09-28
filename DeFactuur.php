@@ -10,6 +10,7 @@ use SumoCoders\DeFactuur\Invoice\Mail;
 use SumoCoders\DeFactuur\Invoice\Payment;
 use SumoCoders\DeFactuur\Product\Product;
 use Exception;
+use Symfony\Component\HttpClient\Psr18Client;
 
 /**
  * DeFactuur class
@@ -49,6 +50,11 @@ class DeFactuur
     private $curl;
 
     /**
+     * Http Client
+     */
+    private Psr18Client $client;
+
+    /**
      * The timeout
      */
     private int $timeOut = 30;
@@ -59,13 +65,13 @@ class DeFactuur
     private string $userAgent;
 
 // class methods
+
     /**
-     * Default destructor
+     * Autowire HttpClient
      */
-    public function __destruct()
+    public function __construct(Psr18Client $deFactuurClient)
     {
-        // close the curl-instance if needed
-        if($this->curl != null) curl_close($this->curl);
+        $this->client = $deFactuurClient;
     }
 
     /**
