@@ -128,14 +128,14 @@ class DeFactuur
         $options = array();
 
         // add credentials
-        $parameters['api_key'] = $this->getApiToken();
+        // $parameters['api_key'] = $this->getApiToken(); -> get from DependencyInjection
 
         // through GET
         if ($method == 'GET') {
             // remove POST-specific stuff
-            unset($options[CURLOPT_HTTPHEADER]);
+            /*unset($options[CURLOPT_HTTPHEADER]);
             unset($options[CURLOPT_POST]);
-            unset($options[CURLOPT_POSTFIELDS]);
+            unset($options[CURLOPT_POSTFIELDS]);*/
 
             // build url
             $url .= '?' . http_build_query($parameters, null);
