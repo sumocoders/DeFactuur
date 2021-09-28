@@ -11,6 +11,7 @@ use SumoCoders\DeFactuur\Invoice\Payment;
 use SumoCoders\DeFactuur\Product\Product;
 use Exception;
 use Symfony\Component\HttpClient\Psr18Client;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 /**
  * DeFactuur class
@@ -52,7 +53,7 @@ class DeFactuur
     /**
      * Http Client
      */
-    private Psr18Client $client;
+    private HttpClientInterface $client;
 
     /**
      * The timeout
@@ -69,7 +70,7 @@ class DeFactuur
     /**
      * Autowire HttpClient
      */
-    public function __construct(Psr18Client $deFactuurClient)
+    public function __construct(HttpClientInterface $deFactuurClient)
     {
         $this->client = $deFactuurClient;
     }
