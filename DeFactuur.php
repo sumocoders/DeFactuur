@@ -1,14 +1,14 @@
 <?php
 
-namespace SumoCoders\Factr;
+namespace SumoCoders\DeFactuur;
 
 use InvalidArgumentException;
-use SumoCoders\Factr\Exception as FactrException;
-use SumoCoders\Factr\Client\Client;
-use SumoCoders\Factr\Invoice\Invoice;
-use SumoCoders\Factr\Invoice\Mail;
-use SumoCoders\Factr\Invoice\Payment;
-use SumoCoders\Factr\Product\Product;
+use SumoCoders\DeFactuur\Exception as FactrException;
+use SumoCoders\DeFactuur\Client\Client;
+use SumoCoders\DeFactuur\Invoice\Invoice;
+use SumoCoders\DeFactuur\Invoice\Mail;
+use SumoCoders\DeFactuur\Invoice\Payment;
+use SumoCoders\DeFactuur\Product\Product;
 use Exception;
 
 /**

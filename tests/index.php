@@ -4,12 +4,12 @@
 require_once '../../../autoload.php';
 require_once 'config.php';
 
-use \SumoCoders\Factr\DeFactuur;
-use \SumoCoders\Factr\Client\Client;
-use \SumoCoders\Factr\Client\Address;
-use \SumoCoders\Factr\Invoice\Invoice;
-use \SumoCoders\Factr\Invoice\Item;
-use \SumoCoders\Factr\Invoice\Payment;
+use \SumoCoders\DeFactuur\DeFactuur;
+use \SumoCoders\DeFactuur\Client\Client;
+use \SumoCoders\DeFactuur\Client\Address;
+use \SumoCoders\DeFactuur\Invoice\Invoice;
+use \SumoCoders\DeFactuur\Invoice\Item;
+use \SumoCoders\DeFactuur\Invoice\Payment;
 
 // create instance
 $factr = new DeFactuur();

@@ -1,6 +1,6 @@
 <?php
 
-namespace SumoCoders\Factr\Client;
+namespace SumoCoders\DeFactuur\Client;
 
 /**
  * Address class

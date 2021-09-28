@@ -1,11 +1,11 @@
 <?php
 
-namespace SumoCoders\Factr\tests;
+namespace SumoCoders\DeFactuur\tests;
 
 require_once __DIR__ . '/../../../autoload.php';
 require_once 'config.php';
 
-use \SumoCoders\Factr\DeFactuur;
+use \SumoCoders\DeFactuur\DeFactuur;
 
 /**
  * test case.
@@ -37,11 +37,11 @@ class FactrTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \SumoCoders\Factr\Client\Address
+     * @return \SumoCoders\DeFactuur\Client\Address
      */
     public function createAddress()
     {
-        $address = new \SumoCoders\Factr\Client\Address();
+        $address = new \SumoCoders\DeFactuur\Client\Address();
         $address->setFullAddress('Kerkstraat 108 9050 Gentbrugge');
         $address->setCountry('BE');
 
@@ -84,7 +84,7 @@ class FactrTest extends \PHPUnit_Framework_TestCase
         $response = $this->factr->clients();
         $this->assertInternalType('array', $response);
         foreach ($response as $item) {
-            $this->assertInstanceOf('\SumoCoders\Factr\Client\Client', $item);
+            $this->assertInstanceOf('\SumoCoders\DeFactuur\Client\Client', $item);
         }
     }
 
@@ -95,7 +95,7 @@ class FactrTest extends \PHPUnit_Framework_TestCase
     {
         $address = $this->createAddress();
 
-        $client = new \SumoCoders\Factr\Client\Client();
+        $client = new \SumoCoders\DeFactuur\Client\Client();
         $client->setFirstName('Tijs');
         $client->setLastName('Verkoyen');
         $client->addEmail('php-factr@verkoyen.eu');
@@ -106,7 +106,7 @@ class FactrTest extends \PHPUnit_Framework_TestCase
 
         $response = $this->factr->clientsCreate($client);
 
-        $this->assertInstanceOf('\SumoCoders\Factr\Client\Client', $response);
+        $this->assertInstanceOf('\SumoCoders\DeFactuur\Client\Client', $response);
 
         // cleanup
         $this->factr->clientsDelete($response->getId());
@@ -119,7 +119,7 @@ class FactrTest extends \PHPUnit_Framework_TestCase
     {
         $address = $this->createAddress();
 
-        $client = new \SumoCoders\Factr\Client\Client();
+        $client = new \SumoCoders\DeFactuur\Client\Client();
         $client->setFirstName('Tijs');
         $client->setLastName('Verkoyen');
         $client->addEmail('php-factr@verkoyen.eu');
@@ -145,7 +145,7 @@ class FactrTest extends \PHPUnit_Framework_TestCase
     {
         $address = $this->createAddress();
 
-        $client = new \SumoCoders\Factr\Client\Client();
+        $client = new \SumoCoders\DeFactuur\Client\Client();
         $client->setFirstName('Tijs');
         $client->setLastName('Verkoyen');
         $client->addEmail('php-factr@verkoyen.eu');
@@ -166,7 +166,7 @@ class FactrTest extends \PHPUnit_Framework_TestCase
     {
         $address = $this->createAddress();
 
-        $client = new \SumoCoders\Factr\Client\Client();
+        $client = new \SumoCoders\DeFactuur\Client\Client();
         $client->setFirstName('Tijs');
         $client->setLastName('Verkoyen');
         $client->addEmail('php-factr@verkoyen.eu');
@@ -178,7 +178,7 @@ class FactrTest extends \PHPUnit_Framework_TestCase
         $id = $response->getId();
         $response = $this->factr->clientsGet($id);
 
-        $this->assertInstanceOf('\SumoCoders\Factr\Client\Client', $response);
+        $this->assertInstanceOf('\SumoCoders\DeFactuur\Client\Client', $response);
 
         // cleanup
         $this->factr->clientsDelete($id);
@@ -203,7 +203,7 @@ class FactrTest extends \PHPUnit_Framework_TestCase
         $response = $this->factr->clientsInvoices($paidInvoice->getClientId());
         $this->assertInternalType('array', $response);
         foreach ($response as $item) {
-            $this->assertInstanceOf('\SumoCoders\Factr\Invoice\Invoice', $item);
+            $this->assertInstanceOf('\SumoCoders\DeFactuur\Invoice\Invoice', $item);
         }
     }
 
@@ -215,7 +215,7 @@ class FactrTest extends \PHPUnit_Framework_TestCase
         $response = $this->factr->invoices();
         $this->assertInternalType('array', $response);
         foreach ($response as $item) {
-            $this->assertInstanceOf('\SumoCoders\Factr\Invoice\Invoice', $item);
+            $this->assertInstanceOf('\SumoCoders\DeFactuur\Invoice\Invoice', $item);
         }
     }
 
@@ -226,7 +226,7 @@ class FactrTest extends \PHPUnit_Framework_TestCase
     {
         $address = $this->createAddress();
 
-        $client = new \SumoCoders\Factr\Client\Client();
+        $client = new \SumoCoders\DeFactuur\Client\Client();
         $client->setFirstName('Tijs');
         $client->setLastName('Verkoyen');
         $client->addEmail('php-factr@verkoyen.eu');
@@ -236,24 +236,24 @@ class FactrTest extends \PHPUnit_Framework_TestCase
 
         $client = $this->factr->clientsCreate($client);
 
-        $item = new \SumoCoders\Factr\Invoice\Item();
+        $item = new \SumoCoders\DeFactuur\Invoice\Item();
         $item->setDescription('just an item');
         $item->setPrice(123.45);
         $item->setAmount(67);
         $item->setVat(21);
 
-        $invoice = new \SumoCoders\Factr\Invoice\Invoice();
+        $invoice = new \SumoCoders\DeFactuur\Invoice\Invoice();
         $invoice->setDescription('Created by the Wrapper-class. ' . time());
         $invoice->setClient($this->factr->clientsGet($client->getId()));
         $invoice->addItem($item);
 
         $invoice = $this->factr->invoicesCreate($invoice);
 
-        $payment = new \SumoCoders\Factr\Invoice\Payment();
+        $payment = new \SumoCoders\DeFactuur\Invoice\Payment();
         $payment->setAmount(10);
 
         $response = $this->factr->invoicesAddPayment($invoice->getId(), $payment);
-        $this->assertInstanceOf('\SumoCoders\Factr\Invoice\Payment', $response);
+        $this->assertInstanceOf('\SumoCoders\DeFactuur\Invoice\Payment', $response);
 
         // cleanup
         $this->factr->invoicesDelete($invoice->getId());
@@ -267,7 +267,7 @@ class FactrTest extends \PHPUnit_Framework_TestCase
     {
         $address = $this->createAddress();
 
-        $client = new \SumoCoders\Factr\Client\Client();
+        $client = new \SumoCoders\DeFactuur\Client\Client();
         $client->setFirstName('Tijs');
         $client->setLastName('Verkoyen');
         $client->addEmail('php-factr@verkoyen.eu');
@@ -277,19 +277,19 @@ class FactrTest extends \PHPUnit_Framework_TestCase
 
         $client = $this->factr->clientsCreate($client);
 
-        $item = new \SumoCoders\Factr\Invoice\Item();
+        $item = new \SumoCoders\DeFactuur\Invoice\Item();
         $item->setDescription('just an item');
         $item->setPrice(123.45);
         $item->setAmount(67);
         $item->setVat(21);
 
-        $invoice = new \SumoCoders\Factr\Invoice\Invoice();
+        $invoice = new \SumoCoders\DeFactuur\Invoice\Invoice();
         $invoice->setDescription('Created by the Wrapper-class. ' . time());
         $invoice->setClient($this->factr->clientsGet($client->getId()));
         $invoice->addItem($item);
 
         $invoice = $this->factr->invoicesCreate($invoice);
-        $this->assertInstanceOf('\SumoCoders\Factr\Invoice\Invoice', $invoice);
+        $this->assertInstanceOf('\SumoCoders\DeFactuur\Invoice\Invoice', $invoice);
 
         // cleanup
         $this->factr->invoicesDelete($invoice->getId());
@@ -303,7 +303,7 @@ class FactrTest extends \PHPUnit_Framework_TestCase
     {
         $address = $this->createAddress();
 
-        $client = new \SumoCoders\Factr\Client\Client();
+        $client = new \SumoCoders\DeFactuur\Client\Client();
         $client->setFirstName('Tijs');
         $client->setLastName('Verkoyen');
         $client->addEmail('php-factr@verkoyen.eu');
@@ -313,13 +313,13 @@ class FactrTest extends \PHPUnit_Framework_TestCase
 
         $client = $this->factr->clientsCreate($client);
 
-        $item = new \SumoCoders\Factr\Invoice\Item();
+        $item = new \SumoCoders\DeFactuur\Invoice\Item();
         $item->setDescription('just an item');
         $item->setPrice(123.45);
         $item->setAmount(67);
         $item->setVat(21);
 
-        $invoice = new \SumoCoders\Factr\Invoice\Invoice();
+        $invoice = new \SumoCoders\DeFactuur\Invoice\Invoice();
         $invoice->setDescription('Created by the Wrapper-class. ' . time());
         $invoice->setClient($this->factr->clientsGet($client->getId()));
         $invoice->addItem($item);
@@ -342,7 +342,7 @@ class FactrTest extends \PHPUnit_Framework_TestCase
     {
         $address = $this->createAddress();
 
-        $client = new \SumoCoders\Factr\Client\Client();
+        $client = new \SumoCoders\DeFactuur\Client\Client();
         $client->setFirstName('Tijs');
         $client->setLastName('Verkoyen');
         $client->addEmail('php-factr@verkoyen.eu');
@@ -352,13 +352,13 @@ class FactrTest extends \PHPUnit_Framework_TestCase
 
         $client = $this->factr->clientsCreate($client);
 
-        $item = new \SumoCoders\Factr\Invoice\Item();
+        $item = new \SumoCoders\DeFactuur\Invoice\Item();
         $item->setDescription('just an item');
         $item->setPrice(123.45);
         $item->setAmount(67);
         $item->setVat(21);
 
-        $invoice = new \SumoCoders\Factr\Invoice\Invoice();
+        $invoice = new \SumoCoders\DeFactuur\Invoice\Invoice();
         $invoice->setDescription('Created by the Wrapper-class. ' . time());
         $invoice->setClient($this->factr->clientsGet($client->getId()));
         $invoice->addItem($item);
@@ -379,7 +379,7 @@ class FactrTest extends \PHPUnit_Framework_TestCase
     {
         $address = $this->createAddress();
 
-        $client = new \SumoCoders\Factr\Client\Client();
+        $client = new \SumoCoders\DeFactuur\Client\Client();
         $client->setFirstName('Tijs');
         $client->setLastName('Verkoyen');
         $client->addEmail('php-factr@verkoyen.eu');
@@ -389,13 +389,13 @@ class FactrTest extends \PHPUnit_Framework_TestCase
 
         $response = $this->factr->clientsCreate($client);
 
-        $item = new \SumoCoders\Factr\Invoice\Item();
+        $item = new \SumoCoders\DeFactuur\Invoice\Item();
         $item->setDescription('just an item');
         $item->setPrice(123.45);
         $item->setAmount(67);
         $item->setVat(21);
 
-        $invoice = new \SumoCoders\Factr\Invoice\Invoice();
+        $invoice = new \SumoCoders\DeFactuur\Invoice\Invoice();
         $invoice->setDescription('Created by the Wrapper-class. ' . time());
         $invoice->setClient($this->factr->clientsGet($response->getId()));
         $invoice->addItem($item);
@@ -403,7 +403,7 @@ class FactrTest extends \PHPUnit_Framework_TestCase
         $response = $this->factr->invoicesCreate($invoice);
 
         $response = $this->factr->invoiceSendByMail($response->getIid());
-        $this->assertInstanceOf('\SumoCoders\Factr\Invoice\Mail', $response);
+        $this->assertInstanceOf('\SumoCoders\DeFactuur\Invoice\Mail', $response);
 
         // cleanup
         $this->factr->invoicesDelete($invoice->getId());
@@ -417,7 +417,7 @@ class FactrTest extends \PHPUnit_Framework_TestCase
     {
         $address = $this->createAddress();
 
-        $client = new \SumoCoders\Factr\Client\Client();
+        $client = new \SumoCoders\DeFactuur\Client\Client();
         $client->setFirstName('Tijs');
         $client->setLastName('Verkoyen');
         $client->addEmail('php-factr@verkoyen.eu');
@@ -427,13 +427,13 @@ class FactrTest extends \PHPUnit_Framework_TestCase
 
         $client = $this->factr->clientsCreate($client);
 
-        $item = new \SumoCoders\Factr\Invoice\Item();
+        $item = new \SumoCoders\DeFactuur\Invoice\Item();
         $item->setDescription('just an item');
         $item->setPrice(123.45);
         $item->setAmount(67);
         $item->setVat(21);
 
-        $invoice = new \SumoCoders\Factr\Invoice\Invoice();
+        $invoice = new \SumoCoders\DeFactuur\Invoice\Invoice();
         $invoice->setDescription('Created by the Wrapper-class. ' . time());
         $invoice->setClient($this->factr->clientsGet($client->getId()));
         $invoice->addItem($item);
@@ -441,7 +441,7 @@ class FactrTest extends \PHPUnit_Framework_TestCase
         $invoice = $this->factr->invoicesCreate($invoice);
 
         $response = $this->factr->invoicesGet($invoice->getId());
-        $this->assertInstanceOf('\SumoCoders\Factr\Invoice\Invoice', $response);
+        $this->assertInstanceOf('\SumoCoders\DeFactuur\Invoice\Invoice', $response);
 
         // cleanup
         $this->factr->invoicesDelete($invoice->getId());
@@ -455,7 +455,7 @@ class FactrTest extends \PHPUnit_Framework_TestCase
     {
         $address = $this->createAddress();
 
-        $client = new \SumoCoders\Factr\Client\Client();
+        $client = new \SumoCoders\DeFactuur\Client\Client();
         $client->setFirstName('Tijs');
         $client->setLastName('Verkoyen');
         $client->addEmail('php-factr@verkoyen.eu');
@@ -465,13 +465,13 @@ class FactrTest extends \PHPUnit_Framework_TestCase
 
         $client = $this->factr->clientsCreate($client);
 
-        $item = new \SumoCoders\Factr\Invoice\Item();
+        $item = new \SumoCoders\DeFactuur\Invoice\Item();
         $item->setDescription('just an item');
         $item->setPrice(123.45);
         $item->setAmount(67);
         $item->setVat(21);
 
-        $invoice = new \SumoCoders\Factr\Invoice\Invoice();
+        $invoice = new \SumoCoders\DeFactuur\Invoice\Invoice();
         $invoice->setDescription('Created by the Wrapper-class. ' . time());
         $invoice->setClient($this->factr->clientsGet($client->getId()));
         $invoice->addItem($item);
@@ -481,7 +481,7 @@ class FactrTest extends \PHPUnit_Framework_TestCase
         $invoice = $this->factr->invoicesGet($invoice->getId());
 
         $response = $this->factr->invoicesGetByIid($invoice->getIid());
-        $this->assertInstanceOf('\SumoCoders\Factr\Invoice\Invoice', $response);
+        $this->assertInstanceOf('\SumoCoders\DeFactuur\Invoice\Invoice', $response);
 
         // cleanup
         $this->factr->invoicesDelete($invoice->getId());

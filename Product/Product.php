@@ -1,6 +1,6 @@
 <?php
 
-namespace SumoCoders\Factr\Product;
+namespace SumoCoders\DeFactuur\Product;
 
 final class Product
 {

@@ -1,8 +1,8 @@
 <?php
 
-namespace SumoCoders\Factr\Invoice;
+namespace SumoCoders\DeFactuur\Invoice;
 
-use SumoCoders\Factr\Client\Client;
+use SumoCoders\DeFactuur\Client\Client;
 use DateTime;
 use Exception;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace SumoCoders\Factr\Invoice;
+namespace SumoCoders\DeFactuur\Invoice;
 
 use DateTime;
 use Exception;

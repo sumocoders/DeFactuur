@@ -1,6 +1,6 @@
 <?php
 
-namespace SumoCoders\Factr;
+namespace SumoCoders\DeFactuur;
 
 /**
  * DeFactuur Exception class
