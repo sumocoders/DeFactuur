@@ -3,7 +3,7 @@
 namespace SumoCoders\Factr;
 
 /**
- * Factr Exception class
+ * DeFactuur Exception class
  *
  * @author	Tijs Verkoyen <php-factr@verkoyen.eu>
  */

@@ -8,7 +8,7 @@ use Exception;
 /**
  * Class History
  *
- * @package SumoCoders\Factr\Invoice
+ * @package SumoCoders\DeFactuur\Invoice
  */
 class History
 {

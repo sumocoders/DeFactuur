@@ -5,7 +5,7 @@ namespace SumoCoders\Factr\Invoice;
 /**
  * Class Item
  *
- * @package SumoCoders\Factr\Invoice
+ * @package SumoCoders\DeFactuur\Invoice
  */
 class Item
 {

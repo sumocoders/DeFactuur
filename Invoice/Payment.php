@@ -8,7 +8,7 @@ use Exception;
 /**
  * Class Payment
  *
- * @package SumoCoders\Factr\Invoice
+ * @package SumoCoders\DeFactuur\Invoice
  */
 class Payment
 {

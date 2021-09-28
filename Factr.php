@@ -12,7 +12,7 @@ use SumoCoders\Factr\Product\Product;
 use Exception;
 
 /**
- * Factr class
+ * DeFactuur class
  *
  * @author		Tijs Verkoyen <php-factr@verkoyen.eu>
  * @version		2.0.0
@@ -246,7 +246,7 @@ class Factr
     /**
      * Remove indexes from http array parameters
      *
-     * The Factr application doesn't like numerical indexes in http parameters too much.
+     * The DeFactuur application doesn't like numerical indexes in http parameters too much.
      * We'll just remove them.
      *
      * ?foo[1]=bar becomes ?foo[]=bar
@@ -278,11 +278,11 @@ class Factr
 
     /**
      * Get the user agent that will be used. Our version will be prepended to yours.
-     * It will look like: "PHP Factr/<version> <your-user-agent>"
+     * It will look like: "PHP DeFactuur/<version> <your-user-agent>"
      */
     public function getUserAgent(): string
     {
-        return 'PHP Factr/' . self::VERSION . ' ' . $this->userAgent;
+        return 'PHP DeFactuur/' . self::VERSION . ' ' . $this->userAgent;
     }
 
     /**
@@ -304,7 +304,7 @@ class Factr
 
     /**
      * Set the user-agent for you application
-     * It will be appended to ours, the result will look like: "PHP Factr/<version> <your-user-agent>"
+     * It will be appended to ours, the result will look like: "PHP DeFactuur/<version> <your-user-agent>"
      *
      * @param string $userAgent Your user-agent, it should look like <app-name>/<app-version>.
      */
@@ -744,7 +744,7 @@ class Factr
     }
 
     /**
-     * Upload a CODA file and let Factr interpret it
+     * Upload a CODA file and let DeFactuur interpret it
      *
      * @throws FactrException
      */

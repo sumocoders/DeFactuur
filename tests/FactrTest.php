@@ -50,7 +50,7 @@ class FactrTest extends \PHPUnit_Framework_TestCase
 
 
     /**
-     * Tests Factr->getTimeOut()
+     * Tests DeFactuur->getTimeOut()
      */
     public function testGetTimeOut()
     {
@@ -59,16 +59,16 @@ class FactrTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Tests Factr->getUserAgent()
+     * Tests DeFactuur->getUserAgent()
      */
     public function testGetUserAgent()
     {
         $this->factr->setUserAgent('testing/1.0.0');
-        $this->assertEquals('PHP Factr/' . Factr::VERSION . ' testing/1.0.0', $this->factr->getUserAgent());
+        $this->assertEquals('PHP DeFactuur/' . Factr::VERSION . ' testing/1.0.0', $this->factr->getUserAgent());
     }
 
     /**
-     * Tests Factr->accountApiToken()
+     * Tests DeFactuur->accountApiToken()
      */
     public function testAccountApiToken()
     {
@@ -77,7 +77,7 @@ class FactrTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Tests Factr->clients
+     * Tests DeFactuur->clients
      */
     public function testClients()
     {
@@ -89,7 +89,7 @@ class FactrTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Tests Factr->clientsCreate
+     * Tests DeFactuur->clientsCreate
      */
     public function testClientsCreate()
     {
@@ -113,7 +113,7 @@ class FactrTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Tests Factr->clientsUpdate
+     * Tests DeFactuur->clientsUpdate
      */
     public function testClientsUpdate()
     {
@@ -139,7 +139,7 @@ class FactrTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Tests Factr->clientsDelete
+     * Tests DeFactuur->clientsDelete
      */
     public function testClientsDelete()
     {
@@ -160,7 +160,7 @@ class FactrTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Tests Factr->clientsGet
+     * Tests DeFactuur->clientsGet
      */
     public function testClientsGet()
     {
@@ -185,7 +185,7 @@ class FactrTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Tests Factr->clientsInvoices
+     * Tests DeFactuur->clientsInvoices
      */
     public function testClientsInvoices()
     {
@@ -208,7 +208,7 @@ class FactrTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Tests Factr->invoices
+     * Tests DeFactuur->invoices
      */
     public function testInvoices()
     {
@@ -220,7 +220,7 @@ class FactrTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Tests Factr->invoicesAddPayment
+     * Tests DeFactuur->invoicesAddPayment
      */
     public function testInvoicesAddPayment()
     {
@@ -261,7 +261,7 @@ class FactrTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Tests Factr->invoicesCreate
+     * Tests DeFactuur->invoicesCreate
      */
     public function testInvoicesCreate()
     {
@@ -297,7 +297,7 @@ class FactrTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Tests Factr->invoicesUpdate
+     * Tests DeFactuur->invoicesUpdate
      */
     public function testInvoicesUpdate()
     {
@@ -336,7 +336,7 @@ class FactrTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Tests Factr->invoicesDelete
+     * Tests DeFactuur->invoicesDelete
      */
     public function testInvoicesDelete()
     {
@@ -373,7 +373,7 @@ class FactrTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Tests Factr->invoiceSendByMail
+     * Tests DeFactuur->invoiceSendByMail
      */
     public function tesInvoiceSendByMail()
     {
@@ -411,7 +411,7 @@ class FactrTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Tests Factr->invoicesGet
+     * Tests DeFactuur->invoicesGet
      */
     public function testInvoicesGet()
     {
@@ -449,7 +449,7 @@ class FactrTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Tests Factr->invoicesGet
+     * Tests DeFactuur->invoicesGet
      */
     public function testInvoicesGetByIid()
     {
