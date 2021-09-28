@@ -3,7 +3,7 @@
 namespace SumoCoders\DeFactuur;
 
 use InvalidArgumentException;
-use SumoCoders\DeFactuur\Exception as FactrException;
+use SumoCoders\DeFactuur\Exception as FactuurException;
 use SumoCoders\DeFactuur\Client\Client;
 use SumoCoders\DeFactuur\Invoice\Invoice;
 use SumoCoders\DeFactuur\Invoice\Mail;
@@ -110,7 +110,7 @@ class DeFactuur
      * Make the call
      *
      * @return array|bool|string
-     * @throws FactrException
+     * @throws FactuurException
      */
     private function doCall(
         string $url,
@@ -159,7 +159,7 @@ class DeFactuur
 
             $options[CURLOPT_POSTFIELDS] = $data;
             $options[CURLOPT_CUSTOMREQUEST] = 'PUT';
-        } else throw new FactrException('Unsupported method (' . $method . ')');
+        } else throw new FactuurException('Unsupported method (' . $method . ')');
 
         // prepend
         $url = self::API_URL . '/' . self::API_VERSION . '/' . $url;
@@ -194,19 +194,19 @@ class DeFactuur
                     $message = '';
                     foreach($json['errors'] as $key => $value) $message .= $key . ': ' . implode(', ', $value) . "\n";
 
-                    throw new FactrException(trim($message));
+                    throw new FactuurException(trim($message));
                 } else {
                     if(is_array($json) && array_key_exists('message', $json)) $response = $json['message'];
-                    throw new FactrException($response, $headers['http_code']);
+                    throw new FactuurException($response, $headers['http_code']);
                 }
             }
 
             // unknown error
-            throw new FactrException('Invalid response (' . $headers['http_code'] . ')', $headers['http_code']);
+            throw new FactuurException('Invalid response (' . $headers['http_code'] . ')', $headers['http_code']);
         }
 
         // error?
-        if($errorNumber != '') throw new FactrException($errorMessage, $errorNumber);
+        if($errorNumber != '') throw new FactuurException($errorMessage, $errorNumber);
 
         // return the headers if needed
         if($returnHeaders) return $headers;
@@ -220,7 +220,7 @@ class DeFactuur
         $json = @json_decode($response, true);
 
         // validate json
-        if($json === false) throw new FactrException('Invalid JSON-response');
+        if($json === false) throw new FactuurException('Invalid JSON-response');
 
         // decode the response
         array_walk_recursive($json, array(__CLASS__, 'decodeResponse'));
@@ -317,7 +317,7 @@ class DeFactuur
     /**
      * Get an API token
      *
-     * @throws FactrException
+     * @throws FactuurException
      */
     public function accountApiToken(string $username, string $password): string
     {
@@ -340,14 +340,14 @@ class DeFactuur
 
         // check status code
         if ($headers['http_code'] != 200) {
-            throw new FactrException('Could\'t authenticate you');
+            throw new FactuurException('Could\'t authenticate you');
         }
 
         // we expect JSON so decode it
         $json = @json_decode($response, true);
 
         // validate json
-        if($json === false || !isset($json['api_token'])) throw new FactrException('Invalid JSON-response');
+        if($json === false || !isset($json['api_token'])) throw new FactuurException('Invalid JSON-response');
 
         // set the token
         $this->setApiToken($json['api_token']);
@@ -374,7 +374,7 @@ class DeFactuur
     /**
      * Get a list of all the clients for the authenticating user.
      *
-     * @throws FactrException
+     * @throws FactuurException
      */
     public function clients(): array
     {
@@ -393,7 +393,7 @@ class DeFactuur
      * Get all of the available information for a single client. You 'll need the id of the client.
      *
      * @return Client|bool
-     * @throws FactrException
+     * @throws FactuurException
      */
     public function clientsGet(string $id)
     {
@@ -407,7 +407,7 @@ class DeFactuur
      * Get all clients that are linked to an email address
      *
      * @return Client[]|bool
-     * @throws FactrException
+     * @throws FactuurException
      */
     public function clientsGetByEmail(string $email)
     {
@@ -427,7 +427,7 @@ class DeFactuur
     /**
      * Create a new client.
      *
-     * @throws FactrException
+     * @throws FactuurException
      */
     public function clientsCreate(Client $client): Client
     {
@@ -440,7 +440,7 @@ class DeFactuur
     /**
      * Update an existing client
      *
-     * @throws FactrException
+     * @throws FactuurException
      */
     public function clientsUpdate(string $id, Client $client): bool
     {
@@ -453,7 +453,7 @@ class DeFactuur
     /**
      * Check if country is European
      *
-     * @throws FactrException
+     * @throws FactuurException
      */
     public function clientsIsEuropean(string $countryCode): bool
     {
@@ -466,7 +466,7 @@ class DeFactuur
     /**
      * Delete a client
      *
-     * @throws FactrException
+     * @throws FactuurException
      */
     public function clientsDelete(string $id): bool
     {
@@ -478,7 +478,7 @@ class DeFactuur
     /**
      * Disable client in favour of another client
      *
-     * @throws FactrException
+     * @throws FactuurException
      */
     public function clientsDisable(string $id, string $replacedById): bool
     {
@@ -569,7 +569,7 @@ class DeFactuur
      * Get the pdf for an invoice
      *
      * @return string|bool Raw PDF contents
-     * @throws FactrException
+     * @throws FactuurException
      */
     public function invoicesGetAsPdf(string $id)
     {
@@ -630,7 +630,7 @@ class DeFactuur
     /**
      * Update an existing invoice
      *
-     * @throws FactrException
+     * @throws FactuurException
      */
     public function invoicesUpdate(string $id, Invoice $invoice): bool
     {
@@ -643,7 +643,7 @@ class DeFactuur
     /**
      * Delete an invoice
      *
-     * @throws FactrException
+     * @throws FactuurException
      */
     public function invoicesDelete(int $id): bool
     {
@@ -656,7 +656,7 @@ class DeFactuur
      * Sending an invoice by mail.
      *
      * @return Mail|bool
-     * @throws FactrException
+     * @throws FactuurException
      */
     public function invoiceSendByMail(
         string $id,
@@ -681,7 +681,7 @@ class DeFactuur
     /**
      * Marking invoice as sent by mail.
      *
-     * @throws FactrException
+     * @throws FactuurException
      */
     public function invoiceMarkAsSentByMail(string $id, string $email): void
     {
@@ -709,7 +709,7 @@ class DeFactuur
      *
      * @param string $id The invoice id
      *
-     * @throws FactrException
+     * @throws FactuurException
      */
     public function invoiceSendReminder(string $id): array
     {
@@ -719,7 +719,7 @@ class DeFactuur
     /**
      * Check if vat is required
      *
-     * @throws FactrException
+     * @throws FactuurException
      */
     public function invoicesVatRequired(string $countryCode, bool $isCompany): bool
     {
@@ -733,7 +733,7 @@ class DeFactuur
     /**
      * Check if valid vat number
      *
-     * @throws FactrException
+     * @throws FactuurException
      */
     public function isValidVat(string $vatNumber): bool
     {
@@ -746,7 +746,7 @@ class DeFactuur
     /**
      * Upload a CODA file and let DeFactuur interpret it
      *
-     * @throws FactrException
+     * @throws FactuurException
      */
     public function uploadCodaFile(string $filePath): array
     {
@@ -759,7 +759,7 @@ class DeFactuur
     }
 
     /**
-     * @throws FactrException
+     * @throws FactuurException
      */
     public function products(): array
     {
@@ -777,7 +777,7 @@ class DeFactuur
 
     /**
      * @return Product|bool
-     * @throws FactrException
+     * @throws FactuurException
      */
     public function productsGet(int $id)
     {
@@ -791,7 +791,7 @@ class DeFactuur
     }
 
     /**
-     * @throws FactrException
+     * @throws FactuurException
      */
     public function productsCreate(Product $product): Product
     {
