@@ -1,14 +1,14 @@
-# Factr class
+# DeFactuur class
 
-> Factr is an online invoicing web application
+> De Factuur is an online invoicing web application
 
 ## About
 
-PHP Factr is a (wrapper)class to communicate with [De Factuur](https://www.defactuur.be).
+PHP DeFactuur is a (wrapper)class to communicate with [De Factuur](https://www.defactuur.be).
 
 ## License
 
-PHP Factr is [BSD](http://classes.verkoyen.eu/overview/bsd) licensed.
+PHP DeFactuur is [BSD](http://classes.verkoyen.eu/overview/bsd) licensed.
 
 ## Documentation
 
