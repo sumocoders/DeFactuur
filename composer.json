@@ -1,8 +1,8 @@
 {
 	"name": "sumocoders/defactuur",
 	"type": "library",
-	"description": "PHP DeFactuur is a (wrapper)class to communicate with DeFactuur (http://www.factr.be).",
-	"homepage": "https://github.com/sumocoders/Factr",
+	"description": "PHP DeFactuur is a (wrapper)class to communicate with DeFactuur (https://www.defactuur.be).",
+	"homepage": "https://github.com/sumocoders/DeFactuur",
 	"license": "BSD-2-Clause",
 	"authors": [
 		{
@@ -14,9 +14,9 @@
 	"require": {
 		"php": ">=7.4.0",
 		"ext-curl": "*",
-      	"ext-json": "*",
+		"ext-json": "*",
 		"symfony/http-client": "^5.3"
-    },
+	},
 	"autoload": {
 		"psr-4": {"SumoCoders\\DeFactuur\\": "src"}
 	}
