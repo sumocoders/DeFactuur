@@ -164,6 +164,14 @@ class DeFactuur
             );
         }
 
+        if ($response->getStatusCode() === 422) {
+            // Unprocessable entity = validation error on data that was passed
+            throw new FactuurException(
+                'Validation error - Unprocessable entity. (' . $response->getStatusCode() . ')',
+                $response->getStatusCode()
+            );
+        }
+
         if ($response->getStatusCode() >= 400) {
             try {
                 $json = @json_decode($response->getContent(), true);
