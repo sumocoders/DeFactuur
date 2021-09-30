@@ -12,49 +12,82 @@ namespace SumoCoders\DeFactuur\Client;
  */
 class Client
 {
-    protected int $id;
-
-    protected int $paymentDays;
-
-    protected int $replacedById;
-
-    protected string $cid;
-
-    protected string $company;
-
-    protected string $vat;
-
-    protected string $firstName;
-
+    // required
     protected string $lastName;
 
-    protected string $phone;
-
-    protected string $fax;
-
-    protected string $cell;
-
-    protected string $website;
-
-    protected string $remarks;
+    protected array $email;
 
     protected Address $billingAddress;
 
     protected Address $companyAddress;
 
-    protected array $email;
+    // optional
+    protected ?int $id;
 
-    protected bool $invoiceableByEmail;
+    protected ?int $paymentDays;
 
-    protected bool $invoiceableBySnailMail;
+    protected ?int $replacedById;
 
-    protected bool $invoiceableByFactr;
+    protected ?string $cid;
 
-    protected bool $disabled = false;
+    protected ?string $company;
 
-    public function setBillingAddress(Address $billingAddress): void
+    protected ?string $vat;
+
+    protected ?string $firstName;
+
+    protected ?string $phone;
+
+    protected ?string $fax;
+
+    protected ?string $cell;
+
+    protected ?string $website;
+
+    protected ?string $remarks;
+
+    protected ?bool $invoiceableByEmail;
+
+    protected ?bool $invoiceableBySnailMail;
+
+    protected ?bool $invoiceableByFactr;
+
+    protected ?bool $disabled;
+
+    public function __construct(
+        string $lastName,
+        array $email,
+        Address $billingAddress,
+        Address $companyAddress
+    ) {
+        $this->lastName = $lastName;
+        $this->email = $email;
+        $this->billingAddress = $billingAddress;
+        $this->companyAddress = $companyAddress;
+
+        $this->id = null;
+        $this->paymentDays = null;
+        $this->replacedById = null;
+        $this->cid = null;
+        $this->company = null;
+        $this->vat = null;
+        $this->firstName = null;
+        $this->phone = null;
+        $this->fax = null;
+        $this->cell = null;
+        $this->website = null;
+        $this->remarks = null;
+        $this->invoiceableByEmail = null;
+        $this->invoiceableBySnailMail = null;
+        $this->invoiceableByFactr = null;
+        $this->disabled = null;
+    }
+
+    public function setBillingAddress(Address $billingAddress): Client
     {
         $this->billingAddress = $billingAddress;
+
+        return $this;
     }
 
     public function getBillingAddress(): Address
@@ -62,32 +95,38 @@ class Client
         return $this->billingAddress;
     }
 
-    public function setCell(string $cell): void
+    public function setCell(string $cell): Client
     {
         $this->cell = $cell;
+
+        return $this;
     }
 
-    public function getCell(): string
+    public function getCell(): ?string
     {
         return $this->cell;
     }
 
-    public function setCid(string $cid): void
+    public function setCid(string $cid): Client
     {
         $this->cid = $cid;
+
+        return $this;
     }
 
-    public function getCid(): string
+    public function getCid(): ?string
     {
         return $this->cid;
     }
 
-    public function setCompany(string $company): void
+    public function setCompany(string $company): Client
     {
         $this->company = $company;
+
+        return $this;
     }
 
-    public function getCompany(): string
+    public function getCompany(): ?string
     {
         return $this->company;
     }
@@ -102,14 +141,18 @@ class Client
         return $this->companyAddress;
     }
 
-    public function addEmail(string $email): void
+    public function addEmail(string $email): Client
     {
         $this->email[] = $email;
+
+        return $this;
     }
 
-    public function setEmail(array $email): void
+    public function setEmail(array $email): Client
     {
         $this->email = $email;
+
+        return $this;
     }
 
     public function getEmail(): array
@@ -117,69 +160,83 @@ class Client
         return $this->email;
     }
 
-    public function setFax(string $fax): void
+    public function setFax(string $fax): Client
     {
         $this->fax = $fax;
+
+        return $this;
     }
 
-    public function getFax(): string
+    public function getFax(): ?string
     {
         return $this->fax;
     }
 
-    public function setFirstName(string $firstName): void
+    public function setFirstName(string $firstName): Client
     {
         $this->firstName = $firstName;
+
+        return $this;
     }
 
-    public function getFirstName(): string
+    public function getFirstName(): ?string
     {
         return $this->firstName;
     }
 
-    private function setId(int $id): void
+    private function setId(int $id): Client
     {
         $this->id = $id;
+
+        return $this;
     }
 
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function setInvoiceableByEmail(bool $invoiceableByEmail): void
+    public function setInvoiceableByEmail(bool $invoiceableByEmail): Client
     {
         $this->invoiceableByEmail = $invoiceableByEmail;
+
+        return $this;
     }
 
-    public function getInvoiceableByEmail(): bool
+    public function getInvoiceableByEmail(): ?bool
     {
         return $this->invoiceableByEmail;
     }
 
-    public function setInvoiceableByFactr(bool $invoiceableByFactr): void
+    public function setInvoiceableByFactr(bool $invoiceableByFactr): Client
     {
         $this->invoiceableByFactr = $invoiceableByFactr;
+
+        return $this;
     }
 
-    public function getInvoiceableByFactr(): bool
+    public function getInvoiceableByFactr(): ?bool
     {
         return $this->invoiceableByFactr;
     }
 
-    public function setInvoiceableBySnailMail(bool $invoiceableBySnailMail): void
+    public function setInvoiceableBySnailMail(bool $invoiceableBySnailMail): Client
     {
         $this->invoiceableBySnailMail = $invoiceableBySnailMail;
+
+        return $this;
     }
 
-    public function getInvoiceableBySnailMail(): bool
+    public function getInvoiceableBySnailMail(): ?bool
     {
         return $this->invoiceableBySnailMail;
     }
 
-    public function setLastName(string $lastName): void
+    public function setLastName(string $lastName): Client
     {
         $this->lastName = $lastName;
+
+        return $this;
     }
 
     public function getLastName(): string
@@ -187,74 +244,88 @@ class Client
         return $this->lastName;
     }
 
-    public function setPaymentDays(int $paymentDays): void
+    public function setPaymentDays(int $paymentDays): Client
     {
         $this->paymentDays = $paymentDays;
+
+        return $this;
     }
 
-    public function getPaymentDays(): int
+    public function getPaymentDays(): ?int
     {
         return $this->paymentDays;
     }
 
-    public function setPhone(string $phone): void
+    public function setPhone(string $phone): Client
     {
         $this->phone = $phone;
+
+        return $this;
     }
 
-    public function getPhone(): string
+    public function getPhone(): ?string
     {
         return $this->phone;
     }
 
-    public function setRemarks(string $remarks): void
+    public function setRemarks(string $remarks): Client
     {
         $this->remarks = $remarks;
+
+        return $this;
     }
 
-    public function getRemarks(): string
+    public function getRemarks(): ?string
     {
         return $this->remarks;
     }
 
-    public function setVat(string $vat): void
+    public function setVat(string $vat): Client
     {
         $this->vat = $vat;
+
+        return $this;
     }
 
-    public function getVat(): string
+    public function getVat(): ?string
     {
         return $this->vat;
     }
 
-    public function setWebsite(string $website): void
+    public function setWebsite(string $website): Client
     {
         $this->website = $website;
+
+        return $this;
     }
 
-    public function getWebsite(): string
+    public function getWebsite(): ?string
     {
         return $this->website;
     }
 
-    public function getReplacedById(): int
+    public function getReplacedById(): ?int
     {
         return $this->replacedById;
     }
 
-    public function setReplacedById(int $replacedById): void
+    public function setReplacedById(int $replacedById): Client
     {
         $this->replacedById = $replacedById;
+
+        return $this;
     }
 
-    public function isDisabled(): bool
+    public function isDisabled(): ?bool
     {
         return $this->disabled;
     }
 
-    public function setDisabled(bool $disabled = true): void
+    public function setDisabled(bool $disabled = true): Client
     {
         $this->disabled = $disabled;
+
+        return $this;
     }
 
     /**
@@ -262,7 +333,12 @@ class Client
      */
     public static function initializeWithRawData(array $data): Client
     {
-        $item = new Client();
+        $item = new Client(
+            $data['last_name'],
+            $data['email'],
+            Address::initializeWithRawData($data['billing_address']),
+            Address::initializeWithRawData($data['company_address'])
+        );
 
         if(isset($data['id'])) $item->setId($data['id']);
         if(isset($data['cid'])) $item->setCid($data['cid']);
@@ -300,7 +376,7 @@ class Client
      */
     public function toArray(bool $forApi = false): array
     {
-        $data = array();
+        $data = [];
 
         $data['id'] = $this->getId();
         $data['cid'] = $this->getCid();
