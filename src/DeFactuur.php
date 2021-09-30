@@ -18,14 +18,6 @@ use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-/**
- * DeFactuur class
- *
- * @author		tijs@sumocoders.be - mail me gerust voor alles
- * @version		2.0.0
- * @copyright	Copyright (c), Tijs Verkoyen. All rights reserved.
- * @license		BSD License
- */
 class DeFactuur
 {
     // internal constant to enable/disable debugging

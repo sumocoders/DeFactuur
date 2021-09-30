@@ -2,14 +2,6 @@
 
 namespace SumoCoders\DeFactuur\Client;
 
-/**
- * Client class
- *
- * @author		Tijs Verkoyen <php-factr@verkoyen.eu>
- * @version		2.0.0
- * @copyright	Copyright (c), Tijs Verkoyen. All rights reserved.
- * @license		BSD License
- */
 class Client
 {
     // required
