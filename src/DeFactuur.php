@@ -21,7 +21,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 /**
  * DeFactuur class
  *
- * @author		Tijs Verkoyen <php-factr@verkoyen.eu>
+ * @author		tijs@sumocoders.be - mail me gerust voor alles
  * @version		2.0.0
  * @copyright	Copyright (c), Tijs Verkoyen. All rights reserved.
  * @license		BSD License
@@ -49,13 +49,6 @@ class DeFactuur
     private string $apiToken;
 
     /**
-     * cURL instance
-     *
-     * @var	resource
-     */
-    private $curl;
-
-    /**
      * Http Client
      */
     private HttpClientInterface $client;
@@ -75,9 +68,16 @@ class DeFactuur
     /**
      * Autowire HttpClient
      */
-    public function __construct(HttpClientInterface $deFactuurClient)
+    public function __construct(
+        HttpClientInterface $deFactuurClient,
+        ?string $deFactuurApiToken = null
+    )
     {
         $this->client = $deFactuurClient;
+
+        if ($deFactuurApiToken !== null) {
+            $this->apiToken = $deFactuurApiToken;
+        }
     }
 
     /**
@@ -130,106 +130,74 @@ class DeFactuur
         string $method = 'GET',
         bool $returnHeaders = false
     ) {
-        // redefine
-        $options = array();
+        $data = null;
 
         // add credentials
-        // $parameters['api_key'] = $this->getApiToken(); -> get from DependencyInjection
+        $parameters['api_key'] = $this->getApiToken();
 
         // through GET
         if ($method == 'GET') {
-            // remove POST-specific stuff
-            /*unset($options[CURLOPT_HTTPHEADER]);
-            unset($options[CURLOPT_POST]);
-            unset($options[CURLOPT_POSTFIELDS]);*/
-
             // build url
             $url .= '?' . http_build_query($parameters, null);
             $url = $this->removeIndexFromArrayParameters($url);
         } elseif ($method == 'POST') {
-            $data = $this->encodeData($parameters);
-
-            if ($this->areWeSendingAFile($data) === false) {
-                $data = http_build_query($data, null);
-                $data = $this->removeIndexFromArrayParameters($data);
-            }
-
-            $options[CURLOPT_POST] = true;
-            $options[CURLOPT_POSTFIELDS] = $data;
+            $data = $parameters;
         } elseif ($method == 'DELETE') {
-            unset($options[CURLOPT_HTTPHEADER]);
-            unset($options[CURLOPT_POST]);
-            unset($options[CURLOPT_POSTFIELDS]);
-            $options[CURLOPT_CUSTOMREQUEST] = 'DELETE';
-
             // build url
             $url .= '?' . http_build_query($parameters, null);
         } elseif ($method == 'PUT') {
-            $data = $this->encodeData($parameters);
-            $data = http_build_query($data, null);
-            $data = $this->removeIndexFromArrayParameters($data);
-
-            $options[CURLOPT_POSTFIELDS] = $data;
-            $options[CURLOPT_CUSTOMREQUEST] = 'PUT';
+            $data = $parameters;
         } else throw new FactuurException('Unsupported method (' . $method . ')');
 
         // prepend
         $url = self::API_URL . '/' . self::API_VERSION . '/' . $url;
 
-        // set options
-        $this->getCurlOptions($url);
+        if ($data === null) {
+            $response = $this->client->request($method, $url);
+        } else {
+            $response = $this->client->request(
+                $method,
+                $url,
+                [
+                    'json' => $data
+                ]
+            );
+        }
 
-        // init
-        $this->curl = curl_init();
+        if ($response->getStatusCode() >= 400) {
+            try {
+                $json = @json_decode($response->getContent(), true);
 
-        // set options
-        curl_setopt_array($this->curl, $options);
+                // throw
+                if ($json !== null && $json !== false) {
+                    // errors?
+                    if (is_array($json) && array_key_exists('errors', $json)) {
+                        $message = '';
+                        foreach ($json['errors'] as $key => $value) $message .= $key . ': ' . implode(', ', $value) . "\n";
 
-        // execute
-        $response = curl_exec($this->curl);
-        $headers = curl_getinfo($this->curl);
-
-        // fetch errors
-        $errorNumber = curl_errno($this->curl);
-        $errorMessage = curl_error($this->curl);
-
-        // check status code
-        if ($headers['http_code'] >= 400) {
-            // try to read JSON
-            $json = @json_decode($response, true);
-
-            // throw
-            if ($json !== null && $json !== false) {
-
-                // errors?
-                if (is_array($json) && array_key_exists('errors', $json)) {
-                    $message = '';
-                    foreach($json['errors'] as $key => $value) $message .= $key . ': ' . implode(', ', $value) . "\n";
-
-                    throw new FactuurException(trim($message));
-                } else {
-                    if(is_array($json) && array_key_exists('message', $json)) $response = $json['message'];
-                    throw new FactuurException($response, $headers['http_code']);
+                        throw new FactuurException(trim($message));
+                    } else {
+                        if (is_array($json) && array_key_exists('message', $json)) $response = $json['message'];
+                        throw new FactuurException($response, $response->getStatusCode());
+                    }
                 }
+            } catch (\Exception $e) {
+                throw new FactuurException($e->getMessage());
             }
 
             // unknown error
-            throw new FactuurException('Invalid response (' . $headers['http_code'] . ')', $headers['http_code']);
+            throw new FactuurException('Invalid response (' . $response->getStatusCode() . ')', $response->getStatusCode());
         }
 
-        // error?
-        if($errorNumber != '') throw new FactuurException($errorMessage, $errorNumber);
-
         // return the headers if needed
-        if($returnHeaders) return $headers;
+        if($returnHeaders) return $response->getHeaders();
 
         if (stristr($url, '.pdf')) {
             // Return pdf contents immediately without tampering with them
-            return $response;
+            return $response->getContent();
         }
 
-        // we expect JSON so decode it
-        $json = @json_decode($response, true);
+        $json = @json_decode($response->getContent(), true);
 
         // validate json
         if($json === false) throw new FactuurException('Invalid JSON-response');
@@ -360,20 +328,6 @@ class DeFactuur
 
         // return
         return $json['api_token'];
-    }
-
-    private function getCurlOptions(string $url): array
-    {
-        $options[CURLOPT_URL] = $url;
-        $options[CURLOPT_PORT] = self::API_PORT;
-        $options[CURLOPT_USERAGENT] = $this->getUserAgent();
-        $options[CURLOPT_FOLLOWLOCATION] = true;
-        $options[CURLOPT_SSL_VERIFYPEER] = false;
-        $options[CURLOPT_SSL_VERIFYHOST] = false;
-        $options[CURLOPT_RETURNTRANSFER] = true;
-        $options[CURLOPT_TIMEOUT] = $this->getTimeOut();
-
-        return $options;
     }
 
 // client methods
