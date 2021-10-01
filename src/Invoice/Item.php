@@ -224,7 +224,12 @@ class Item
      */
     public static function initializeWithRawData(array $data): Item
     {
-        $item = new Item();
+        $item = new Item(
+            $data['description'],
+            $data['amount'],
+            $data['price'],
+            $data['vat'] ?? null
+        );
 
         if(isset($data['description'])) $item->setDescription($data['description']);
         if(isset($data['amount'])) $item->setAmount($data['amount']);
