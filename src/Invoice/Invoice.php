@@ -13,57 +13,86 @@ use Exception;
  */
 class Invoice
 {
-    protected int $id;
+    protected ?Client $client;
 
-    protected int $clientId;
-
-    protected string $iid;
-
-    protected string $state;
-
-    protected string $paymentMethod;
-
-    protected string $description;
-
-    protected string $shownRemark;
-
-    protected DateTime $generated;
-
-    protected DateTime $dueDate;
-
-    protected DateTime $fullyPaidAt;
+    protected ?int $clientId;
 
     /** @var Item[] */
     protected array $items;
 
+    protected ?int $id;
+
+    protected ?string $iid;
+
+    protected ?string $state;
+
+    protected ?string $paymentMethod;
+
+    protected ?string $description;
+
+    protected ?string $shownRemark;
+
+    protected ?DateTime $generated;
+
+    protected ?DateTime $dueDate;
+
+    protected ?DateTime $fullyPaidAt;
+
     /** @var Payment[] */
-    protected array $payments;
+    protected ?array $payments;
 
     /** @var History[] */
-    protected array $history;
+    protected ?array $history;
 
-    protected float $total;
+    protected ?float $total;
 
-    protected Client $client;
+    protected ?string $language;
 
-    protected string $language;
-
-    protected float $discount;
+    protected ?float $discount;
 
     protected bool $discountIsPercentage = false;
 
-    protected string $discountDescription;
+    protected ?string $discountDescription;
 
-    protected string $vatException;
+    protected ?string $vatException;
 
-    protected string $vatDescription;
+    protected ?string $vatDescription;
 
     protected bool $prepareForSending = false;
 
-    public function setClient(Client $client): void
+    public function __construct(
+        ?Client $client = null,
+        array $items = []
+    ) {
+        $this->client = $client;
+        $this->clientId = $client === null ? null : $client->getId();
+        $this->items = $items;
+
+        $this->id = null;
+        $this->iid = null;
+        $this->state = null;
+        $this->paymentMethod = null;
+        $this->description = null;
+        $this->shownRemark = null;
+        $this->generated = null;
+        $this->dueDate = null;
+        $this->fullyPaidAt = null;
+        $this->payments = null;
+        $this->history = null;
+        $this->total = null;
+        $this->language = null;
+        $this->discount = null;
+        $this->discountDescription = null;
+        $this->vatException = null;
+        $this->vatDescription = null;
+    }
+
+    public function setClient(Client $client): Invoice
     {
         $this->client = $client;
-        $this->setClientId($client->getId());
+        $this->clientId = $client->getId();
+
+        return $this;
     }
 
     public function getClient(): Client
@@ -71,9 +100,11 @@ class Invoice
         return $this->client;
     }
 
-    public function setClientId(int $clientId): void
+    public function setClientId(int $clientId): Invoice
     {
         $this->clientId = $clientId;
+
+        return $this;
     }
 
     public function getClientId(): int
@@ -81,12 +112,14 @@ class Invoice
         return $this->clientId;
     }
 
-    public function setDescription(string $description): void
+    public function setDescription(string $description): Invoice
     {
         $this->description = $description;
+
+        return $this;
     }
 
-    public function getDescription(): string
+    public function getDescription(): ?string
     {
         return $this->description;
     }
@@ -96,7 +129,7 @@ class Invoice
         $this->dueDate = $dueDate;
     }
 
-    public function getDueDate(): DateTime
+    public function getDueDate(): ?DateTime
     {
         return $this->dueDate;
     }
@@ -106,7 +139,7 @@ class Invoice
         $this->fullyPaidAt = $fullyPaidAt;
     }
 
-    public function getFullyPaidAt(): DateTime
+    public function getFullyPaidAt(): ?DateTime
     {
         return $this->fullyPaidAt;
     }
@@ -116,7 +149,7 @@ class Invoice
         $this->generated = $generated;
     }
 
-    public function getGenerated(): DateTime
+    public function getGenerated(): ?DateTime
     {
         return $this->generated;
     }
@@ -129,15 +162,17 @@ class Invoice
     /**
      * @param History[] $history
      */
-    public function setHistory(array $history): void
+    public function setHistory(array $history): Invoice
     {
         $this->history = $history;
+
+        return $this;
     }
 
     /**
      * @return History[]
      */
-    public function getHistory(): array
+    public function getHistory(): ?array
     {
         return $this->history;
     }
@@ -147,7 +182,7 @@ class Invoice
         $this->id = $id;
     }
 
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
     }
@@ -157,22 +192,26 @@ class Invoice
         $this->iid = $iid;
     }
 
-    public function getIid(): string
+    public function getIid(): ?string
     {
         return $this->iid;
     }
 
-    public function addItem(Item $item): void
+    public function addItem(Item $item): Invoice
     {
         $this->items[] = $item;
+
+        return $this;
     }
 
     /**
      * @param Item[] $items
      */
-    public function setItems(array $items): void
+    public function setItems(array $items): Invoice
     {
         $this->items = $items;
+
+        return $this;
     }
 
     /**
@@ -194,31 +233,34 @@ class Invoice
     /**
      * @return Payment[]
      */
-    public function getPayments(): array
+    public function getPayments(): ?array
     {
         return $this->payments;
     }
 
-    public function setShownRemark(string $shownRemark): void
+    public function setShownRemark(string $shownRemark): Invoice
     {
         $this->shownRemark = $shownRemark;
+
+        return $this;
     }
 
-    public function getShownRemark(): string
+    public function getShownRemark(): ?string
     {
         return $this->shownRemark;
     }
 
     /**
      * @param string $state Possible states are: paid, sent, created
-     * @todo: valueObject?
      */
-    public function setState(string $state): void
+    public function setState(string $state): Invoice
     {
         $this->state = $state;
+
+        return $this;
     }
 
-    public function getState(): string
+    public function getState(): ?string
     {
         return $this->state;
     }
@@ -226,14 +268,15 @@ class Invoice
     /**
      * @param string $paymentMethod Possible payment methods are:
      *  not_paid, cheque, transfer, bankcontact, cash, direct_debit and paid
-     * @todo: valueObject
      */
-    public function setPaymentMethod(string $paymentMethod): void
+    public function setPaymentMethod(string $paymentMethod): Invoice
     {
         $this->paymentMethod = $paymentMethod;
+
+        return $this;
     }
 
-    public function getPaymentMethod(): string
+    public function getPaymentMethod(): ?string
     {
         return $this->paymentMethod;
     }
@@ -243,22 +286,24 @@ class Invoice
         $this->total = $total;
     }
 
-    public function getTotal(): float
+    public function getTotal(): ?float
     {
         return $this->total;
     }
 
-    public function setLanguage(string $language): void
+    public function setLanguage(string $language): Invoice
     {
         $this->language = $language;
+
+        return $this;
     }
 
-    public function getLanguage(): string
+    public function getLanguage(): ?string
     {
         return $this->language;
     }
 
-    public function getDiscount(): float
+    public function getDiscount(): ?float
     {
         return $this->discount;
     }
@@ -282,7 +327,7 @@ class Invoice
         return $this;
     }
 
-    public function getDiscountDescription(): string
+    public function getDiscountDescription(): ?string
     {
         return $this->discountDescription;
     }
@@ -299,7 +344,7 @@ class Invoice
         $this->prepareForSending = true;
     }
 
-    public function getVatException(): string
+    public function getVatException(): ?string
     {
         return $this->vatException;
     }
@@ -311,7 +356,7 @@ class Invoice
         return $this;
     }
 
-    public function getVatDescription(): string
+    public function getVatDescription(): ?string
     {
         return $this->vatDescription;
     }
