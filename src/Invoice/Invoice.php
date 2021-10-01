@@ -5,6 +5,8 @@ namespace SumoCoders\DeFactuur\Invoice;
 use SumoCoders\DeFactuur\Client\Client;
 use DateTime;
 use Exception;
+use SumoCoders\DeFactuur\ValueObject\PaymentMethod;
+use SumoCoders\DeFactuur\ValueObject\State;
 
 /**
  * Class Invoice
@@ -250,12 +252,9 @@ class Invoice
         return $this->shownRemark;
     }
 
-    /**
-     * @param string $state Possible states are: paid, sent, created
-     */
-    public function setState(string $state): Invoice
+    public function setState(State $state): Invoice
     {
-        $this->state = $state;
+        $this->state = $state->getValue();
 
         return $this;
     }
@@ -265,13 +264,9 @@ class Invoice
         return $this->state;
     }
 
-    /**
-     * @param string $paymentMethod Possible payment methods are:
-     *  not_paid, cheque, transfer, bankcontact, cash, direct_debit and paid
-     */
-    public function setPaymentMethod(string $paymentMethod): Invoice
+    public function setPaymentMethod(PaymentMethod $paymentMethod): Invoice
     {
-        $this->paymentMethod = $paymentMethod;
+        $this->paymentMethod = $paymentMethod->getValue();
 
         return $this;
     }
