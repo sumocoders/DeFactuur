@@ -326,10 +326,10 @@ class Client
     public static function initializeWithRawData(array $data): Client
     {
         $item = new Client(
-            $data['last_name'],
-            $data['email'],
-            Address::initializeWithRawData($data['billing_address']),
-            Address::initializeWithRawData($data['company_address'])
+            $data['last_name'] ?? '',
+            $data['email'] ?? '',
+            Address::initializeWithRawData($data['billing_address'] ?? []),
+            Address::initializeWithRawData($data['company_address'] ?? [])
         );
 
         if(isset($data['id'])) $item->setId($data['id']);
