@@ -54,14 +54,14 @@ class DeFactuur
 
 // class methods
     public function __construct(
-        HttpClientInterface $deFactuurClient,
-        ?string $deFactuurApiToken = null
+        HttpClientInterface $httpClient,
+        ?string $apiToken = null
     )
     {
-        $this->client = $deFactuurClient;
+        $this->client = $httpClient;
 
-        if ($deFactuurApiToken !== null) {
-            $this->apiToken = $deFactuurApiToken;
+        if ($apiToken !== null && $apiToken !== '') {
+            $this->apiToken = $apiToken;
         }
     }
 
