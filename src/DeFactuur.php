@@ -40,9 +40,6 @@ class DeFactuur
      */
     private string $apiToken;
 
-    /**
-     * Http Client
-     */
     private HttpClientInterface $client;
 
     /**
@@ -56,10 +53,6 @@ class DeFactuur
     private string $userAgent;
 
 // class methods
-
-    /**
-     * Autowire HttpClient
-     */
     public function __construct(
         HttpClientInterface $deFactuurClient,
         ?string $deFactuurApiToken = null
