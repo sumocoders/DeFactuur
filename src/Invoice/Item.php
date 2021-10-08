@@ -11,7 +11,7 @@ class Item
 {
     protected string $description;
 
-    protected int $amount;
+    protected float $amount;
 
     protected float $price;
 
@@ -39,7 +39,7 @@ class Item
 
     public function __construct(
         string $description,
-        int $amount,
+        float $amount,
         float $price,
         ?int $vat = null
     ) {
@@ -59,14 +59,14 @@ class Item
         $this->productId = null;
     }
 
-    public function setAmount(int $amount): Item
+    public function setAmount(float $amount): Item
     {
         $this->amount = $amount;
 
         return $this;
     }
 
-    public function getAmount(): int
+    public function getAmount(): float
     {
         return $this->amount;
     }
