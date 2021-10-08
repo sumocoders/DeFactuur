@@ -26,7 +26,7 @@ class Invoice
 
     protected ?string $iid;
 
-    protected ?string $state;
+    protected ?State $state;
 
     protected ?string $paymentMethod;
 
@@ -254,12 +254,12 @@ class Invoice
 
     public function setState(State $state): Invoice
     {
-        $this->state = $state->getValue();
+        $this->state = $state;
 
         return $this;
     }
 
-    public function getState(): ?string
+    public function getState(): ?State
     {
         return $this->state;
     }
@@ -415,7 +415,7 @@ class Invoice
     {
         $data = array();
         $data['client_id'] = $this->getClientId();
-        $data['state'] = $this->getState();
+        $data['state'] = $this->getState()->getValue();
         $data['payment_method'] = $this->getPaymentMethod();
         $data['description'] = $this->getDescription();
         $data['shown_remark'] = $this->getShownRemark();
