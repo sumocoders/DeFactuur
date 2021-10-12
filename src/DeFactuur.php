@@ -238,7 +238,7 @@ class DeFactuur
      *
      * @return array|null|string|string[] the cleaned up query string or array
      */
-    private function    removeIndexFromArrayParameters($query)
+    private function removeIndexFromArrayParameters($query)
     {
         return preg_replace('/%5B([0-9]*)%5D/iU', '%5B%5D', $query);
     }
