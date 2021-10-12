@@ -15,7 +15,6 @@
 		"php": ">=7.4.0",
 		"ext-curl": "*",
 		"ext-json": "*",
-		"php-http/message": "^1.12",
 		"psr/http-client": "^1.0",
 		"nyholm/psr7": "^1.4"
 	},
