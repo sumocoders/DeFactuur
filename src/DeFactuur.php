@@ -3,6 +3,10 @@
 namespace SumoCoders\DeFactuur;
 
 use InvalidArgumentException;
+use Psr\Http\Client\ClientExceptionInterface;
+use Psr\Http\Client\ClientInterface;
+use Psr\Http\Message\RequestFactoryInterface;
+use Psr\Http\Message\StreamFactoryInterface;
 use SumoCoders\DeFactuur\Exception as DeFactuurException;
 use SumoCoders\DeFactuur\Client\Client;
 use SumoCoders\DeFactuur\Invoice\Invoice;
@@ -10,8 +14,6 @@ use SumoCoders\DeFactuur\Invoice\Mail;
 use SumoCoders\DeFactuur\Invoice\Payment;
 use SumoCoders\DeFactuur\Product\Product;
 use Exception;
-use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class DeFactuur
 {
@@ -35,7 +37,11 @@ class DeFactuur
      */
     private string $apiToken;
 
-    private HttpClientInterface $client;
+    private ClientInterface $client;
+
+    private RequestFactoryInterface $requestFactory;
+
+    private StreamFactoryInterface $streamFactory;
 
     /**
      * The timeout
@@ -49,11 +55,14 @@ class DeFactuur
 
 // class methods
     public function __construct(
-        HttpClientInterface $httpClient,
+        ClientInterface $httpClient,
+        RequestFactoryInterface $requestFactory,
+        StreamFactoryInterface $streamFactory,
         ?string $apiToken = null
-    )
-    {
+    ) {
         $this->client = $httpClient;
+        $this->requestFactory = $requestFactory;
+        $this->streamFactory = $streamFactory;
 
         if ($apiToken !== null && $apiToken !== '') {
             $this->apiToken = $apiToken;
@@ -121,27 +130,33 @@ class DeFactuur
             $url .= '?' . http_build_query($parameters, null);
             $url = $this->removeIndexFromArrayParameters($url);
         } elseif ($method == 'POST') {
-            $data = $parameters;
+            $data = $this->encodeData($parameters);
+
+            if ($this->areWeSendingAFile($data) === false) {
+                $data = http_build_query($data, null);
+                $data = $this->removeIndexFromArrayParameters($data);
+            }
         } elseif ($method == 'DELETE') {
             // build url
             $url .= '?' . http_build_query($parameters, null);
         } elseif ($method == 'PUT') {
-            $data = $parameters;
+            $data = $this->encodeData($parameters);
+            $data = http_build_query($data, null);
+            $data = $this->removeIndexFromArrayParameters($data);
         } else throw new DeFactuurException('Unsupported method (' . $method . ')');
 
         // prepend
         $url = self::API_URL . '/' . self::API_VERSION . '/' . $url;
+        $request = $this->requestFactory->createRequest($method, $url);
 
-        if ($data === null) {
-            $response = $this->client->request($method, $url);
-        } else {
-            $response = $this->client->request(
-                $method,
-                $url,
-                [
-                    'json' => $data
-                ]
-            );
+        if ($data !== null) {
+           $request = $request->withBody($this->streamFactory->createStream($data));
+        }
+
+        try {
+            $response = $this->client->sendRequest($request);
+        } catch (ClientExceptionInterface $e) {
+            throw new DeFactuurException($e->getMessage());
         }
 
         if ($response->getStatusCode() === 422) {
@@ -154,7 +169,7 @@ class DeFactuur
 
         if ($response->getStatusCode() >= 400) {
             try {
-                $json = @json_decode($response->getContent(), true);
+                $json = json_decode($response->getBody()->getContents(), true);
 
                 // throw
                 if ($json !== null && $json !== false) {
@@ -182,10 +197,10 @@ class DeFactuur
 
         if (stristr($url, '.pdf')) {
             // Return pdf contents immediately without tampering with them
-            return $response->getContent();
+            return $response->getBody()->getContents();
         }
 
-        $json = @json_decode($response->getContent(), true);
+        $json = json_decode($response->getBody()->getContents(), true);
 
         // validate json
         if($json === false) throw new DeFactuurException('Invalid JSON-response');
@@ -223,7 +238,7 @@ class DeFactuur
      *
      * @return array|null|string|string[] the cleaned up query string or array
      */
-    private function removeIndexFromArrayParameters($query)
+    private function    removeIndexFromArrayParameters($query)
     {
         return preg_replace('/%5B([0-9]*)%5D/iU', '%5B%5D', $query);
     }
@@ -291,14 +306,14 @@ class DeFactuur
     {
         $url = self::API_URL . '/' . self::API_VERSION . '/account/api_token.json';
 
+        $request = $this->requestFactory->createRequest('GET', $url);
+        $request = $request->withAddedHeader(
+            'Authorization',
+            'Basic ' . base64_encode($username . ':' . $password)
+        );
+
         try {
-            $response = $this->client->request(
-                'GET',
-                $url,
-                [
-                    'auth_basic' => [$username, $password],
-                ]
-            );
+            $response = $this->client->sendRequest($request);
 
             // check status code
             if ($response->getStatusCode() != 200) {
@@ -306,8 +321,8 @@ class DeFactuur
             }
 
             // we expect JSON so decode it
-            $json = @json_decode($response->getContent(), true);
-        } catch (TransportExceptionInterface $e) {
+            $json = json_decode($response->getBody()->getContents(), true);
+        } catch (ClientExceptionInterface $e) {
             throw new DeFactuurException($e->getMessage());
         }
 
