@@ -15,7 +15,11 @@
 		"php": ">=7.4.0",
 		"ext-curl": "*",
 		"ext-json": "*",
-		"symfony/http-client": "^5.3"
+		"psr/http-client": "^1.0",
+		"nyholm/psr7": "^1.4"
+	},
+	"suggest": {
+		"symfony/http-client": "Low-level HTTP-client"
 	},
 	"autoload": {
 		"psr-4": {"SumoCoders\\DeFactuur\\": "src"}

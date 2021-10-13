@@ -11,35 +11,59 @@ class Item
 {
     protected string $description;
 
-    protected string $externalProductId;
-
     protected float $amount;
 
     protected float $price;
 
-    protected float $totalWithoutVat;
-
-    protected float $totalVat;
-
-    protected float $totalWithVat;
-
-    protected float $totalVatOverrule;
-
     protected ?int $vat;
 
-    protected int $referenceId;
+    protected ?string $externalProductId;
 
-    protected float $discount;
+    protected ?float $totalWithoutVat;
+
+    protected ?float $totalVat;
+
+    protected ?float $totalWithVat;
+
+    protected ?float $totalVatOverrule;
+
+    protected ?int $referenceId;
+
+    protected ?float $discount;
 
     protected bool $discountIsPercentage = false;
 
-    protected string $discountDescription;
+    protected ?string $discountDescription;
 
     protected ?int $productId;
 
-    public function setAmount(float $amount): void
+    public function __construct(
+        string $description,
+        float $amount,
+        float $price,
+        ?int $vat = null
+    ) {
+        $this->description = $description;
+        $this->amount = $amount;
+        $this->price = $price;
+        $this->vat = $vat;
+
+        $this->externalProductId = null;
+        $this->totalWithoutVat = null;
+        $this->totalVat = null;
+        $this->totalWithVat = null;
+        $this->totalVatOverrule = null;
+        $this->referenceId = null;
+        $this->discount = null;
+        $this->discountDescription = null;
+        $this->productId = null;
+    }
+
+    public function setAmount(float $amount): Item
     {
         $this->amount = $amount;
+
+        return $this;
     }
 
     public function getAmount(): float
@@ -47,9 +71,11 @@ class Item
         return $this->amount;
     }
 
-    public function setDescription(string $description): void
+    public function setDescription(string $description): Item
     {
         $this->description = $description;
+
+        return $this;
     }
 
     public function getDescription(): string
@@ -57,9 +83,11 @@ class Item
         return $this->description;
     }
 
-    public function setPrice(float $price): void
+    public function setPrice(float $price): Item
     {
         $this->price = $price;
+
+        return $this;
     }
 
     public function getPrice(): float
@@ -72,7 +100,7 @@ class Item
         $this->referenceId = $referenceId;
     }
 
-    public function getReferenceId(): int
+    public function getReferenceId(): ?int
     {
         return $this->referenceId;
     }
@@ -82,7 +110,7 @@ class Item
         $this->totalVat = $totalVat;
     }
 
-    public function getTotalVat(): float
+    public function getTotalVat(): ?float
     {
         return $this->totalVat;
     }
@@ -92,7 +120,7 @@ class Item
         $this->totalWithVat = $totalWithVat;
     }
 
-    public function getTotalWithVat(): float
+    public function getTotalWithVat(): ?float
     {
         return $this->totalWithVat;
     }
@@ -102,14 +130,16 @@ class Item
         $this->totalWithoutVat = $totalWithoutVat;
     }
 
-    public function getTotalWithoutVat(): float
+    public function getTotalWithoutVat(): ?float
     {
         return $this->totalWithoutVat;
     }
 
-    public function setVat(?int $vat = null): void
+    public function setVat(?int $vat = null): Item
     {
         $this->vat = $vat;
+
+        return $this;
     }
 
     public function getVat(): ?int
@@ -117,17 +147,19 @@ class Item
         return $this->vat;
     }
 
-    public function setTotalVatOverrule(float $vatAmount): void
+    public function setTotalVatOverrule(float $vatAmount): Item
     {
         $this->totalVatOverrule = $vatAmount;
+
+        return $this;
     }
 
-    public function getTotalVatOverrule(): float
+    public function getTotalVatOverrule(): ?float
     {
         return $this->totalVatOverrule;
     }
 
-    public function getDiscount(): float
+    public function getDiscount(): ?float
     {
         return $this->discount;
     }
@@ -151,7 +183,7 @@ class Item
         return $this;
     }
 
-    public function getDiscountDescription(): string
+    public function getDiscountDescription(): ?string
     {
         return $this->discountDescription;
     }
@@ -163,19 +195,23 @@ class Item
         return $this;
     }
 
-    public function getExternalProductId(): string
+    public function getExternalProductId(): ?string
     {
         return $this->externalProductId;
     }
 
-    public function setExternalProductId(string $externalProductId): void
+    public function setExternalProductId(string $externalProductId): Item
     {
         $this->externalProductId = $externalProductId;
+
+        return $this;
     }
 
-    public function setProductId(?int $productId): void
+    public function setProductId(?int $productId): Item
     {
         $this->productId = $productId;
+
+        return $this;
     }
 
     public function getProductId(): ?int
@@ -188,7 +224,12 @@ class Item
      */
     public static function initializeWithRawData(array $data): Item
     {
-        $item = new Item();
+        $item = new Item(
+            $data['description'],
+            $data['amount'],
+            $data['price'],
+            $data['vat'] ?? null
+        );
 
         if(isset($data['description'])) $item->setDescription($data['description']);
         if(isset($data['amount'])) $item->setAmount($data['amount']);
