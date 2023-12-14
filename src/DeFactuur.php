@@ -180,8 +180,8 @@ class DeFactuur
 
                         throw new DeFactuurException(trim($message));
                     } else {
-                        if (is_array($json) && array_key_exists('message', $json)) $response = $json['message'];
-                        throw new DeFactuurException($response, $response->getStatusCode());
+                        if (is_array($json) && array_key_exists('message', $json)) $message = $json['message'];
+                        throw new DeFactuurException($message ?? 'No message', $response->getStatusCode());
                     }
                 }
             } catch (\Exception $e) {
