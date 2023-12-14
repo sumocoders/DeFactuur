@@ -414,7 +414,7 @@ class Invoice
     {
         $data = array();
         $data['client_id'] = $this->getClientId();
-        $data['state'] = $this->getState()->getValue();
+        $data['state'] = $this->getState()?->getValue();
         $data['payment_method'] = $this->getPaymentMethod();
         $data['description'] = $this->getDescription();
         $data['shown_remark'] = $this->getShownRemark();
