@@ -110,14 +110,14 @@ class DeFactuur
     /**
      * Make the call
      *
-     * @return array|bool|string
+     * @return array|bool|string|int
      * @throws DeFactuurException
      */
     private function doCall(
         string $url,
         ?array $parameters = null,
         string $method = 'GET',
-        bool $returnHeaders = false
+        bool $returnStatusCode = false
     ) {
         $data = null;
 
@@ -193,7 +193,7 @@ class DeFactuur
         }
 
         // return the headers if needed
-        if($returnHeaders) return $response->getHeaders();
+        if($returnStatusCode) return $response->getStatusCode();
 
         if (stristr($url, '.pdf')) {
             // Return pdf contents immediately without tampering with them
@@ -410,7 +410,7 @@ class DeFactuur
         $parameters['client'] = $client->toArray(true);
         $rawData = $this->doCall('clients/' . $id . '.json', $parameters, 'PUT', true);
 
-        return ($rawData['http_code'] == 204);
+        return $rawData === 204;
     }
 
     /**
@@ -435,7 +435,7 @@ class DeFactuur
     {
         $rawData = $this->doCall('clients/' . $id . '.json', null, 'DELETE', true);
 
-        return ($rawData['http_code'] == 204);
+        return $rawData === 204;
     }
 
     /**
@@ -448,7 +448,7 @@ class DeFactuur
         $parameters['replaced_by_id'] = $replacedById;
         $rawData = $this->doCall('clients/' . $id . '/disable.json', $parameters, 'POST', true);
 
-        return ($rawData['http_code'] == 201);
+        return $rawData === 201;
     }
 
     /**
@@ -600,7 +600,7 @@ class DeFactuur
         $parameters['invoice'] = $invoice->toArray(true);
         $rawData = $this->doCall('invoices/' . $id . '.json', $parameters, 'PUT', true);
 
-        return ($rawData['http_code'] == 204);
+        return $rawData === 204;
     }
 
     /**
@@ -612,7 +612,7 @@ class DeFactuur
     {
         $rawData = $this->doCall('invoices/' . $id . '.json', null, 'DELETE', true);
 
-        return ($rawData['http_code'] == 204);
+        return $rawData === 204;
     }
 
     /**
