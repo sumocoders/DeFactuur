@@ -2,10 +2,12 @@
 
 namespace SumoCoders\DeFactuur\Client;
 
+use InvalidArgumentException;
+
 class Client
 {
     // required
-    protected string $lastName;
+    protected ?string $lastName;
 
     protected array $email;
 
@@ -47,11 +49,21 @@ class Client
     protected ?bool $disabled;
 
     public function __construct(
-        string $lastName,
         array $email,
         Address $billingAddress,
-        Address $companyAddress
+        Address $companyAddress,
+        ?string $lastName = null,
+        ?string $company = null,
+        ?string $vat = null
     ) {
+        if ($lastName === null && $company === null) {
+            throw new InvalidArgumentException('You need to provide either a last name or a company name');
+        }
+
+        if ($company && !$vat) {
+            throw new InvalidArgumentException('You need to provide a VAT number when providing a company name');
+        }
+
         $this->lastName = $lastName;
         $this->email = $email;
         $this->billingAddress = $billingAddress;
@@ -61,8 +73,8 @@ class Client
         $this->paymentDays = null;
         $this->replacedById = null;
         $this->cid = null;
-        $this->company = null;
-        $this->vat = null;
+        $this->company = $company;
+        $this->vat = $vat;
         $this->firstName = null;
         $this->phone = null;
         $this->fax = null;
@@ -231,7 +243,7 @@ class Client
         return $this;
     }
 
-    public function getLastName(): string
+    public function getLastName(): ?string
     {
         return $this->lastName;
     }
