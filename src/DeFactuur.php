@@ -6,6 +6,7 @@ use InvalidArgumentException;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 use SumoCoders\DeFactuur\Exception as DeFactuurException;
 use SumoCoders\DeFactuur\Client\Client;
@@ -107,6 +108,43 @@ class DeFactuur
         return $array;
     }
 
+    private function doCallAndReturnStatusCode(
+        string $url,
+        ?array $parameters = null,
+        string $method = 'GET'
+    ): int {
+        return $this->doCall($url, $parameters, $method)->getStatusCode();
+    }
+
+    /**
+     * Make the call
+     *
+     * @return array|bool|string
+     */
+    private function doCallAndReturnData(
+        string $url,
+        ?array $parameters = null,
+        string $method = 'GET'
+    ) {
+        $response = $this->doCall($url, $parameters, $method);
+
+        if (stristr($url, '.pdf')) {
+            // Return pdf contents immediately without tampering with them
+            return $response->getBody()->getContents();
+        }
+
+        $json = json_decode($response->getBody()->getContents(), true);
+
+        // validate json
+        if($json === false) throw new DeFactuurException('Invalid JSON-response');
+
+        // decode the response
+        array_walk_recursive($json, array(__CLASS__, 'decodeResponse'));
+
+        // return
+        return $json;
+    }
+
     /**
      * Make the call
      *
@@ -116,9 +154,8 @@ class DeFactuur
     private function doCall(
         string $url,
         ?array $parameters = null,
-        string $method = 'GET',
-        bool $returnStatusCode = false
-    ) {
+        string $method = 'GET'
+    ): ResponseInterface {
         $data = null;
 
         // add credentials
@@ -192,24 +229,7 @@ class DeFactuur
             throw new DeFactuurException('Invalid response (' . $response->getStatusCode() . ')', $response->getStatusCode());
         }
 
-        // return the headers if needed
-        if($returnStatusCode) return $response->getStatusCode();
-
-        if (stristr($url, '.pdf')) {
-            // Return pdf contents immediately without tampering with them
-            return $response->getBody()->getContents();
-        }
-
-        $json = json_decode($response->getBody()->getContents(), true);
-
-        // validate json
-        if($json === false) throw new DeFactuurException('Invalid JSON-response');
-
-        // decode the response
-        array_walk_recursive($json, array(__CLASS__, 'decodeResponse'));
-
-        // return
-        return $json;
+        return $response;
     }
 
     /**
@@ -342,7 +362,7 @@ class DeFactuur
     public function clients(): array
     {
         $clients = array();
-        $rawData = $this->doCall('clients.json');
+        $rawData = $this->doCallAndReturnData('clients.json');
         if (!empty($rawData)) {
             foreach ($rawData as $data) {
                 $clients[] = Client::initializeWithRawData($data);
@@ -360,7 +380,7 @@ class DeFactuur
      */
     public function clientsGet(string $id)
     {
-        $rawData = $this->doCall('clients/' . $id . '.json');
+        $rawData = $this->doCallAndReturnData('clients/' . $id . '.json');
         if(empty($rawData)) return false;
 
         return Client::initializeWithRawData($rawData);
@@ -374,7 +394,7 @@ class DeFactuur
      */
     public function clientsGetByEmail(string $email)
     {
-        $rawData = $this->doCall('clients.json', array('email' => $email));
+        $rawData = $this->doCallAndReturnData('clients.json', array('email' => $email));
         if (empty($rawData)) {
             return false;
         }
@@ -395,7 +415,7 @@ class DeFactuur
     public function clientsCreate(Client $client): Client
     {
         $parameters['client'] = $client->toArray(true);
-        $rawData = $this->doCall('clients.json', $parameters, 'POST');
+        $rawData = $this->doCallAndReturnData('clients.json', $parameters, 'POST');
 
         return Client::initializeWithRawData($rawData);
     }
@@ -408,7 +428,7 @@ class DeFactuur
     public function clientsUpdate(string $id, Client $client): bool
     {
         $parameters['client'] = $client->toArray(true);
-        $rawData = $this->doCall('clients/' . $id . '.json', $parameters, 'PUT', true);
+        $rawData = $this->doCallAndReturnStatusCode('clients/' . $id . '.json', $parameters, 'PUT', true);
 
         return $rawData === 204;
     }
@@ -421,7 +441,7 @@ class DeFactuur
     public function clientsIsEuropean(string $countryCode): bool
     {
         $parameters['country_code'] = $countryCode;
-        $rawData = $this->doCall('clients/is_european.json', $parameters);
+        $rawData = $this->doCallAndReturnData('clients/is_european.json', $parameters);
 
         return $rawData['european'];
     }
@@ -433,7 +453,7 @@ class DeFactuur
      */
     public function clientsDelete(string $id): bool
     {
-        $rawData = $this->doCall('clients/' . $id . '.json', null, 'DELETE', true);
+        $rawData = $this->doCallAndReturnStatusCode('clients/' . $id . '.json', null, 'DELETE', true);
 
         return $rawData === 204;
     }
@@ -446,7 +466,7 @@ class DeFactuur
     public function clientsDisable(string $id, string $replacedById): bool
     {
         $parameters['replaced_by_id'] = $replacedById;
-        $rawData = $this->doCall('clients/' . $id . '/disable.json', $parameters, 'POST', true);
+        $rawData = $this->doCallAndReturnStatusCode('clients/' . $id . '/disable.json', $parameters, 'POST', true);
 
         return $rawData === 201;
     }
@@ -459,7 +479,7 @@ class DeFactuur
     public function clientsInvoices(int $id): array
     {
         $invoices = array();
-        $rawData = $this->doCall('clients/' . $id . '/invoices.json');
+        $rawData = $this->doCallAndReturnData('clients/' . $id . '/invoices.json');
         if (!empty($rawData)) {
             foreach ($rawData as $data) {
                 $invoices[] = Invoice::initializeWithRawData($data);
@@ -504,7 +524,7 @@ class DeFactuur
         }
 
         $invoices = array();
-        $rawData = $this->doCall('invoices.json', $parameters);
+        $rawData = $this->doCallAndReturnData('invoices.json', $parameters);
         if (!empty($rawData)) {
             foreach ($rawData as $data) {
                 $invoices[] = Invoice::initializeWithRawData($data);
@@ -522,7 +542,7 @@ class DeFactuur
      */
     public function invoicesGet(string $id)
     {
-        $rawData = $this->doCall('invoices/' . $id . '.json');
+        $rawData = $this->doCallAndReturnData('invoices/' . $id . '.json');
         if(empty($rawData)) return false;
 
         return Invoice::initializeWithRawData($rawData);
@@ -536,7 +556,7 @@ class DeFactuur
      */
     public function invoicesGetAsPdf(string $id)
     {
-        $rawData = $this->doCall('invoices/' . $id . '.pdf');
+        $rawData = $this->doCallAndReturnData('invoices/' . $id . '.pdf');
 
         if (empty($rawData)) {
             return false;
@@ -553,7 +573,7 @@ class DeFactuur
      */
     public function invoicesGetByIid(string $iid)
     {
-        $rawData = $this->doCall('invoices/by_iid/' . $iid . '.json');
+        $rawData = $this->doCallAndReturnData('invoices/by_iid/' . $iid . '.json');
         if(empty($rawData)) return false;
 
         return Invoice::initializeWithRawData($rawData);
@@ -572,7 +592,7 @@ class DeFactuur
         }
 
         $parameters['invoice'] = $invoice->toArray(true);
-        $rawData = $this->doCall('invoices.json', $parameters, 'POST');
+        $rawData = $this->doCallAndReturnData('invoices.json', $parameters, 'POST');
 
         return Invoice::initializeWithRawData($rawData);
     }
@@ -585,7 +605,7 @@ class DeFactuur
     public function invoicesCreateCreditNote(string $id, Invoice $creditNote): Invoice
     {
         $parameters['credit_note'] = $creditNote->toArray(true);
-        $rawData = $this->doCall('invoices/' . $id . '/credit_notes.json', $parameters, 'POST');
+        $rawData = $this->doCallAndReturnData('invoices/' . $id . '/credit_notes.json', $parameters, 'POST');
 
         return Invoice::initializeWithRawData($rawData);
     }
@@ -598,7 +618,7 @@ class DeFactuur
     public function invoicesUpdate(string $id, Invoice $invoice): bool
     {
         $parameters['invoice'] = $invoice->toArray(true);
-        $rawData = $this->doCall('invoices/' . $id . '.json', $parameters, 'PUT', true);
+        $rawData = $this->doCallAndReturnStatusCode('invoices/' . $id . '.json', $parameters, 'PUT', true);
 
         return $rawData === 204;
     }
@@ -610,7 +630,7 @@ class DeFactuur
      */
     public function invoicesDelete(int $id): bool
     {
-        $rawData = $this->doCall('invoices/' . $id . '.json', null, 'DELETE', true);
+        $rawData = $this->doCallAndReturnStatusCode('invoices/' . $id . '.json', null, 'DELETE', true);
 
         return $rawData === 204;
     }
@@ -635,7 +655,7 @@ class DeFactuur
         if($bcc !== null) $parameters['mail']['bcc'] = $bcc;
         if($subject !== null) $parameters['mail']['subject'] = $subject;
         if($text !== null) $parameters['mail']['text'] = $text;
-        $rawData = $this->doCall('invoices/' . $id . '/mails.json', $parameters, 'POST');
+        $rawData = $this->doCallAndReturnData('invoices/' . $id . '/mails.json', $parameters, 'POST');
         if(empty($rawData)) return false;
 
         return Mail::initializeWithRawData($rawData);
@@ -651,7 +671,7 @@ class DeFactuur
         $parameters = array();
         $parameters['by'] = 'mail';
         $parameters['to'] = $email;
-        $this->doCall('invoices/' . $id . '/sent', $parameters, 'POST');
+        $this->doCallAndReturnData('invoices/' . $id . '/sent', $parameters, 'POST');
     }
 
     /**
@@ -662,7 +682,7 @@ class DeFactuur
     public function invoicesAddPayment(string $id, Payment $payment): Payment
     {
         $parameters['payment'] = $payment->toArray(true);
-        $rawData = $this->doCall('invoices/' . $id . '/payments.json', $parameters, 'POST');
+        $rawData = $this->doCallAndReturnData('invoices/' . $id . '/payments.json', $parameters, 'POST');
 
         return Payment::initializeWithRawData($rawData);
     }
@@ -676,7 +696,7 @@ class DeFactuur
      */
     public function invoiceSendReminder(string $id): array
     {
-        return $this->doCall('invoices/' . $id . '/reminders', array(), 'POST');
+        return $this->doCallAndReturnData('invoices/' . $id . '/reminders', array(), 'POST');
     }
 
     /**
@@ -688,7 +708,7 @@ class DeFactuur
     {
         $parameters['country_code'] = $countryCode;
         $parameters['company'] = $isCompany;
-        $rawData = $this->doCall('invoices/vat_required.json', $parameters);
+        $rawData = $this->doCallAndReturnData('invoices/vat_required.json', $parameters);
 
         return $rawData['vat_required'];
     }
@@ -701,7 +721,7 @@ class DeFactuur
     public function isValidVat(string $vatNumber): bool
     {
         $parameters['vat'] = $vatNumber;
-        $rawData = $this->doCall('vat/verify.json', $parameters);
+        $rawData = $this->doCallAndReturnData('vat/verify.json', $parameters);
 
         return $rawData['valid'];
     }
@@ -718,7 +738,7 @@ class DeFactuur
             'file_type' => 'coda',
         );
 
-        return $this->doCall('payments/process_file.json', $parameters, 'POST');
+        return $this->doCallAndReturnData('payments/process_file.json', $parameters, 'POST');
     }
 
     /**
@@ -727,7 +747,7 @@ class DeFactuur
     public function products(): array
     {
         $products = array();
-        $rawData = $this->doCall('products.json');
+        $rawData = $this->doCallAndReturnData('products.json');
 
         if (!empty($rawData)) {
             foreach ($rawData as $data) {
@@ -744,7 +764,7 @@ class DeFactuur
      */
     public function productsGet(int $id)
     {
-        $rawData = $this->doCall('products/' . $id . '.json');
+        $rawData = $this->doCallAndReturnData('products/' . $id . '.json');
 
         if (empty($rawData)) {
             return false;
@@ -760,7 +780,7 @@ class DeFactuur
     {
         $parameters['product'] = $product->toArray();
 
-        $rawData = $this->doCall('products.json', $parameters, 'POST');
+        $rawData = $this->doCallAndReturnData('products.json', $parameters, 'POST');
 
         return Product::initializeWithRawData($rawData);
     }
