@@ -46,6 +46,10 @@ class Client
 
     protected ?bool $invoiceableByFactr;
 
+    protected ?bool $invoiceableByPeppol;
+
+    protected ?string $peppolId;
+
     protected ?bool $disabled;
 
     public function __construct(
@@ -84,6 +88,8 @@ class Client
         $this->invoiceableByEmail = null;
         $this->invoiceableBySnailMail = null;
         $this->invoiceableByFactr = null;
+        $this->invoiceableByPeppol = null;
+        $this->peppolId = null;
         $this->disabled = null;
     }
 
@@ -236,6 +242,30 @@ class Client
         return $this->invoiceableBySnailMail;
     }
 
+    public function setInvoiceableByPeppol(bool $invoiceableByPeppol): Client
+    {
+        $this->invoiceableByPeppol = $invoiceableByPeppol;
+
+        return $this;
+    }
+
+    public function getInvoiceableByPeppol(): ?bool
+    {
+        return $this->invoiceableByPeppol;
+    }
+
+    public function getPeppolId(): ?string
+    {
+        return $this->peppolId;
+    }
+
+    public function setPeppolId(?string $peppolId): Client
+    {
+        $this->peppolId = $peppolId;
+
+        return $this;
+    }
+
     public function setLastName(string $lastName): Client
     {
         $this->lastName = $lastName;
@@ -369,6 +399,8 @@ class Client
         if(isset($data['invoiceable_by_email'])) $item->setInvoiceableByEmail($data['invoiceable_by_email']);
         if(isset($data['invoiceable_by_snailmail'])) $item->setInvoiceableBySnailMail($data['invoiceable_by_snailmail']);
         if(isset($data['invoiceable_by_factr'])) $item->setInvoiceableByFactr($data['invoiceable_by_factr']);
+        if(isset($data['invoiceable_by_peppol'])) $item->setInvoiceableByPeppol($data['invoiceable_by_peppol']);
+        if(isset($data['peppol_id'])) $item->setPeppolId($data['peppol_id']);
         if(isset($data['payment_days'])) $item->setPaymentDays($data['payment_days']);
         if(isset($data['remarks'])) $item->setRemarks($data['remarks']);
         if(isset($data['replaced_by_id'])) $item->setReplacedById($data['replaced_by_id']);
@@ -405,6 +437,8 @@ class Client
         $data['invoiceable_by_email'] = $this->getInvoiceableByEmail();
         $data['invoiceable_by_snailmail'] = $this->getInvoiceableBySnailMail();
         $data['invoiceable_by_factr'] = $this->getInvoiceableByFactr();
+        $data['invoiceable_by_peppol'] = $this->getInvoiceableByPeppol();
+        $data['peppol_id'] = $this->getPeppolId();
         $data['payment_days'] = $this->getPaymentDays();
         $data['remarks'] = $this->getRemarks();
         $data['replaced_by_id'] = $this->getReplacedById();
