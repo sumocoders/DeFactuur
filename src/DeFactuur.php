@@ -2,19 +2,20 @@
 
 namespace SumoCoders\DeFactuur;
 
+use Exception;
 use InvalidArgumentException;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamFactoryInterface;
-use SumoCoders\DeFactuur\Exception as DeFactuurException;
 use SumoCoders\DeFactuur\Client\Client;
+use SumoCoders\DeFactuur\Exception as DeFactuurException;
 use SumoCoders\DeFactuur\Invoice\Invoice;
 use SumoCoders\DeFactuur\Invoice\Mail;
 use SumoCoders\DeFactuur\Invoice\Payment;
+use SumoCoders\DeFactuur\Peppol\Search\SearchResult;
 use SumoCoders\DeFactuur\Product\Product;
-use Exception;
 
 class DeFactuur
 {
@@ -489,7 +490,25 @@ class DeFactuur
         return $invoices;
     }
 
+ // PEPPOL methods
+
+    public function peppolSearch(string $searchTerm): array
+    {
+        $parameters['q'] = $searchTerm;
+        $results = array();
+        $rawData = $this->doCallAndReturnData('peppol/search', $parameters);
+
+        if (!empty($rawData)) {
+            foreach ($rawData as $data) {
+                $results[] = SearchResult::initializeWithRawData($data);
+            }
+        }
+
+        return $results;
+    }
+
 // invoice methods
+
     /**
      * Get a list of all the invoices.
      *

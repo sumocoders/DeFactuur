@@ -67,6 +67,7 @@ try {
 //    $response = $factr->clientsUpdate(3026, $client);
 //    $response = $factr->clientsDelete(123);
 //    $response = $factr->clientsInvoices(2703);
+//    $response = $factr->peppolSearch('FooBar');
 
 //    $response = $factr->invoices();
 //    $response = $factr->invoicesGet(9256);
