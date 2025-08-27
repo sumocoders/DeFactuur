@@ -181,7 +181,7 @@ class DeFactuur
             $data = $this->encodeData($parameters);
 
             if ($this->areWeSendingAFile($data) === false) {
-                $data = http_build_query($data, null);
+                $data = http_build_query($data);
                 $data = $this->removeIndexFromArrayParameters($data);
             }
         } elseif ($method == 'DELETE') {

@@ -17,7 +17,7 @@ $factr = new DeFactuur(
     new \Nyholm\Psr7\Factory\Psr17Factory(),
 );
 $factr->setApiToken(API_TOKEN);
-//$factr->accountApiToken('demo@defactuur.be', 'demo');
+//$token = $factr->accountApiToken('demo@defactuur.be', 'demo');
 
 $address = new Address();
 $address->setCountry('BE');
