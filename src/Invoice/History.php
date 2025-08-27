@@ -44,8 +44,12 @@ class History
     {
         $item = new History();
 
-        if(isset($data['created_at'])) $item->setCreatedAt(new DateTime('@' . strtotime($data['created_at'])));
-        if(isset($data['message'])) $item->setMessage($data['message']);
+        if (isset($data['created_at'])) {
+            $item->setCreatedAt(new DateTime('@' . strtotime($data['created_at'])));
+        }
+        if (isset($data['message'])) {
+            $item->setMessage($data['message']);
+        }
 
         return $item;
     }

@@ -376,12 +376,24 @@ class Client
             $data['vat'] ?? null,
         );
 
-        if(isset($data['id'])) $item->setId($data['id']);
-        if(isset($data['cid'])) $item->setCid($data['cid']);
-        if(isset($data['first_name'])) $item->setFirstName($data['first_name']);
-        if(isset($data['last_name'])) $item->setLastName($data['last_name']);
-        if(isset($data['company'])) $item->setCompany($data['company']);
-        if(isset($data['vat'])) $item->setVat($data['vat']);
+        if (isset($data['id'])) {
+            $item->setId($data['id']);
+        }
+        if (isset($data['cid'])) {
+            $item->setCid($data['cid']);
+        }
+        if (isset($data['first_name'])) {
+            $item->setFirstName($data['first_name']);
+        }
+        if (isset($data['last_name'])) {
+            $item->setLastName($data['last_name']);
+        }
+        if (isset($data['company'])) {
+            $item->setCompany($data['company']);
+        }
+        if (isset($data['vat'])) {
+            $item->setVat($data['vat']);
+        }
         if (isset($data['company_address'])) {
             $address = Address::initializeWithRawData($data['company_address']);
             $item->setCompanyAddress($address);
@@ -390,21 +402,51 @@ class Client
             $address = Address::initializeWithRawData($data['billing_address']);
             $item->setBillingAddress($address);
         }
-        if(isset($data['email'])) $item->setEmail($data['email']);
-        if(isset($data['fax'])) $item->setFax($data['fax']);
-        if(isset($data['phone'])) $item->setPhone($data['phone']);
-        if(isset($data['cell'])) $item->setCell($data['cell']);
-        if(isset($data['cellphone'])) $item->setCell($data['cellphone']);   // @remark: kinda stupid the API expects cell, but returns cellphone
-        if(isset($data['website'])) $item->setWebsite($data['website']);
-        if(isset($data['invoiceable_by_email'])) $item->setInvoiceableByEmail($data['invoiceable_by_email']);
-        if(isset($data['invoiceable_by_snailmail'])) $item->setInvoiceableBySnailMail($data['invoiceable_by_snailmail']);
-        if(isset($data['invoiceable_by_factr'])) $item->setInvoiceableByFactr($data['invoiceable_by_factr']);
-        if(isset($data['invoiceable_by_peppol'])) $item->setInvoiceableByPeppol($data['invoiceable_by_peppol']);
-        if(isset($data['peppol_id'])) $item->setPeppolId($data['peppol_id']);
-        if(isset($data['payment_days'])) $item->setPaymentDays($data['payment_days']);
-        if(isset($data['remarks'])) $item->setRemarks($data['remarks']);
-        if(isset($data['replaced_by_id'])) $item->setReplacedById($data['replaced_by_id']);
-        if(isset($data['disabled_at']) && !empty($data['disabled_at'])) $item->setDisabled();
+        if (isset($data['email'])) {
+            $item->setEmail($data['email']);
+        }
+        if (isset($data['fax'])) {
+            $item->setFax($data['fax']);
+        }
+        if (isset($data['phone'])) {
+            $item->setPhone($data['phone']);
+        }
+        if (isset($data['cell'])) {
+            $item->setCell($data['cell']);
+        }
+        if (isset($data['cellphone'])) {
+            $item->setCell($data['cellphone']);
+        }   // @remark: kinda stupid the API expects cell, but returns cellphone
+        if (isset($data['website'])) {
+            $item->setWebsite($data['website']);
+        }
+        if (isset($data['invoiceable_by_email'])) {
+            $item->setInvoiceableByEmail($data['invoiceable_by_email']);
+        }
+        if (isset($data['invoiceable_by_snailmail'])) {
+            $item->setInvoiceableBySnailMail($data['invoiceable_by_snailmail']);
+        }
+        if (isset($data['invoiceable_by_factr'])) {
+            $item->setInvoiceableByFactr($data['invoiceable_by_factr']);
+        }
+        if (isset($data['invoiceable_by_peppol'])) {
+            $item->setInvoiceableByPeppol($data['invoiceable_by_peppol']);
+        }
+        if (isset($data['peppol_id'])) {
+            $item->setPeppolId($data['peppol_id']);
+        }
+        if (isset($data['payment_days'])) {
+            $item->setPaymentDays($data['payment_days']);
+        }
+        if (isset($data['remarks'])) {
+            $item->setRemarks($data['remarks']);
+        }
+        if (isset($data['replaced_by_id'])) {
+            $item->setReplacedById($data['replaced_by_id']);
+        }
+        if (isset($data['disabled_at']) && !empty($data['disabled_at'])) {
+            $item->setDisabled();
+        }
 
         return $item;
     }
@@ -423,12 +465,18 @@ class Client
         $data['company'] = $this->getCompany();
         $data['vat'] = $this->getVat();
         $address = $this->getCompanyAddress();
-        if($address !== null) $data['company_address'] = $address->toArray($forApi);
+        if ($address !== null) {
+            $data['company_address'] = $address->toArray($forApi);
+        }
         $address = $this->getBillingAddress();
-        if($address !== null) $data['billing_address'] = $address->toArray($forApi);
+        if ($address !== null) {
+            $data['billing_address'] = $address->toArray($forApi);
+        }
         // @todo this is a bug in the API, so for now we just send the first email address
         $addresses = $this->getEmail();
-        if(!empty($addresses)) $data['email'] = $addresses[0];
+        if (!empty($addresses)) {
+            $data['email'] = $addresses[0];
+        }
         $data['email'] = $addresses;
         $data['fax'] = $this->getFax();
         $data['phone'] = $this->getPhone();

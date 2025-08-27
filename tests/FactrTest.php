@@ -48,7 +48,6 @@ class FactrTest extends \PHPUnit_Framework_TestCase
         return $address;
     }
 
-
     /**
      * Tests DeFactuur->getTimeOut()
      */
@@ -198,7 +197,9 @@ class FactrTest extends \PHPUnit_Framework_TestCase
             }
         }
 
-        if($paidInvoice === null) $this->markTestSkipped('No paid invoices found');
+        if ($paidInvoice === null) {
+            $this->markTestSkipped('No paid invoices found');
+        }
 
         $response = $this->factr->clientsInvoices($paidInvoice->getClientId());
         $this->assertInternalType('array', $response);
