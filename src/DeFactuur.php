@@ -175,7 +175,7 @@ class DeFactuur
         // through GET
         if ($method == 'GET') {
             // build url
-            $url .= '?' . http_build_query($parameters, null);
+            $url .= '?' . http_build_query($parameters);
             $url = $this->removeIndexFromArrayParameters($url);
         } elseif ($method == 'POST') {
             $data = $this->encodeData($parameters);
