@@ -684,44 +684,6 @@ class DeFactuur
     }
 
     /**
-     * Sending an invoice by mail.
-     *
-     * @return Mail|bool
-     * @throws DeFactuurException
-     */
-    public function invoiceSendByMail(
-        string $id,
-        ?string $to = null,
-        ?string $cc = null,
-        ?string $bcc = null,
-        ?string $subject = null,
-        ?string $text = null
-    ) {
-        $parameters = array();
-        if ($to !== null) {
-            $parameters['mail']['to'] = $to;
-        }
-        if ($cc !== null) {
-            $parameters['mail']['cc'] = $cc;
-        }
-        if ($bcc !== null) {
-            $parameters['mail']['bcc'] = $bcc;
-        }
-        if ($subject !== null) {
-            $parameters['mail']['subject'] = $subject;
-        }
-        if ($text !== null) {
-            $parameters['mail']['text'] = $text;
-        }
-        $rawData = $this->doCallAndReturnData('invoices/' . $id . '/mails.json', $parameters, 'POST');
-        if (empty($rawData)) {
-            return false;
-        }
-
-        return Mail::initializeWithRawData($rawData);
-    }
-
-    /**
      * Marking invoice as sent by mail.
      *
      * @throws DeFactuurException
