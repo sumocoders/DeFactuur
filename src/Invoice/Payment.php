@@ -57,9 +57,15 @@ class Payment
     {
         $item = new Payment();
 
-        if(isset($data['amount'])) $item->setAmount($data['amount']);
-        if(isset($data['paid_at'])) $item->setPaidAt(new DateTime('@' . strtotime($data['paid_at'])));
-        if(isset($data['identifier'])) $item->setIdentifier($data['identifier']);
+        if (isset($data['amount'])) {
+            $item->setAmount($data['amount']);
+        }
+        if (isset($data['paid_at'])) {
+            $item->setPaidAt(new DateTime('@' . strtotime($data['paid_at'])));
+        }
+        if (isset($data['identifier'])) {
+            $item->setIdentifier($data['identifier']);
+        }
 
         return $item;
     }
@@ -72,8 +78,11 @@ class Payment
         $data = array();
         $data['amount'] = $this->getAmount();
         if ($this->paidAt !== null) {
-            if(!$forApi) $data['paid_at'] = $this->getPaidAt()->getTimestamp();
-            else $data['paid_at'] = date('Y-m-d\TH:i:s', $this->getPaidAt()->getTimestamp());
+            if (!$forApi) {
+                $data['paid_at'] = $this->getPaidAt()->getTimestamp();
+            } else {
+                $data['paid_at'] = date('Y-m-d\TH:i:s', $this->getPaidAt()->getTimestamp());
+            }
         }
         $data['identifier'] = $this->getIdentifier();
 

@@ -76,11 +76,21 @@ class Mail
     {
         $item = new Mail();
 
-        if(isset($data['bcc'])) $item->setBcc($data['bcc']);
-        if(isset($data['cc'])) $item->setCc($data['cc']);
-        if(isset($data['subject'])) $item->setSubject($data['subject']);
-        if(isset($data['text'])) $item->setText($data['text']);
-        if(isset($data['to'])) $item->setTo($data['to']);
+        if (isset($data['bcc'])) {
+            $item->setBcc($data['bcc']);
+        }
+        if (isset($data['cc'])) {
+            $item->setCc($data['cc']);
+        }
+        if (isset($data['subject'])) {
+            $item->setSubject($data['subject']);
+        }
+        if (isset($data['text'])) {
+            $item->setText($data['text']);
+        }
+        if (isset($data['to'])) {
+            $item->setTo($data['to']);
+        }
 
         return $item;
     }

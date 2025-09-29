@@ -1,8 +1,7 @@
 <?php
 
-//require
-require_once '../../../autoload.php';
-require_once 'config.php';
+require_once realpath(__DIR__ . '/../vendor/autoload.php');
+require_once realpath(__DIR__ . '/config.php');
 
 use \SumoCoders\DeFactuur\DeFactuur;
 use \SumoCoders\DeFactuur\Client\Client;
@@ -12,36 +11,44 @@ use \SumoCoders\DeFactuur\Invoice\Item;
 use \SumoCoders\DeFactuur\Invoice\Payment;
 
 // create instance
-$factr = new DeFactuur();
+$factr = new DeFactuur(
+    new \Symfony\Component\HttpClient\Psr18Client(),
+    new \Nyholm\Psr7\Factory\Psr17Factory(),
+    new \Nyholm\Psr7\Factory\Psr17Factory(),
+);
 $factr->setApiToken(API_TOKEN);
+//$token = $factr->accountApiToken('demo@defactuur.be', 'demo');
 
 $address = new Address();
 $address->setCountry('BE');
 $address->setFullAddress('Kerkstraat 108' . "\n" . '9050 Gentbrugge');
 
-$client = new Client();
+$client = new Client(
+    ['foo@bar.com'],
+    $address,
+    $address,
+    null,
+    'company',
+    'VAT'
+);
 $client->setPaymentDays(30);
 $client->setCid('CID' . time());
-$client->setCompany('company');
-$client->setVat('VAT');
 $client->setFirstName('first_name');
-$client->setLastName('last_name');
 $client->setPhone('phone');
 $client->setFax('fax');
 $client->setCell('cell');
 $client->setWebsite('website');
 $client->setRemarks('remarks');
-$client->setCompanyAddress($address);
-$client->setBillingAddress($address);
 $client->addEmail('e@mail.com');
 $client->setInvoiceableByEmail(false);
 $client->setInvoiceableBySnailMail(false);
 $client->setInvoiceableByFactr(false);
 
-$item = new Item();
+$item = new Item(
+    'just an item',
+    12,
+);
 $item->setAmount(12);
-$item->setDescription('just an item');
-$item->setPrice(34.56);
 $item->setVat(21);
 
 $payment = new Payment();
@@ -54,7 +61,7 @@ $invoice->addItem($item);
 $invoice->setClientId(3026);
 $invoice->setDescription('description');
 $invoice->setShownRemark('shown_remark');
-$invoice->setState('created');
+$invoice->setState(\SumoCoders\DeFactuur\ValueObject\State::created());
 $invoice->setPaymentMethod('not_paid');
 
 try {
@@ -67,6 +74,7 @@ try {
 //    $response = $factr->clientsUpdate(3026, $client);
 //    $response = $factr->clientsDelete(123);
 //    $response = $factr->clientsInvoices(2703);
+//    $response = $factr->peppolSearch('FooBar');
 
 //    $response = $factr->invoices();
 //    $response = $factr->invoicesGet(9256);
@@ -75,6 +83,8 @@ try {
 //    $invoice->setDescription('Updated by the wrapper class');
 //    $response = $factr->invoicesUpdate(9256, $invoice);
 //    $response = $factr->invoiceSendByMail(5261, 'foo@bar.com');
+//    $response = $factr->invoiceSendByPeppol(5261);
+//    $response = $factr->invoiceMarkAsSentByMail(5261, 'foo@bar.com');
 //    $response = $factr->invoicesAddPayment(5261, $payment);
 //    $response = $factr->invoicesDelete($response->getId());
 } catch (Exception $e) {

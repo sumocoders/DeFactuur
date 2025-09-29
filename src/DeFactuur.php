@@ -2,19 +2,20 @@
 
 namespace SumoCoders\DeFactuur;
 
+use Exception;
 use InvalidArgumentException;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamFactoryInterface;
-use SumoCoders\DeFactuur\Exception as DeFactuurException;
 use SumoCoders\DeFactuur\Client\Client;
+use SumoCoders\DeFactuur\Exception as DeFactuurException;
 use SumoCoders\DeFactuur\Invoice\Invoice;
 use SumoCoders\DeFactuur\Invoice\Mail;
 use SumoCoders\DeFactuur\Invoice\Payment;
+use SumoCoders\DeFactuur\Peppol\Search\SearchResult;
 use SumoCoders\DeFactuur\Product\Product;
-use Exception;
 
 class DeFactuur
 {
@@ -73,12 +74,18 @@ class DeFactuur
     /**
      * Decode the response
      *
-     * @param mixed  $value
+     * @param mixed $value
      */
     private function decodeResponse(&$value, string $key)
     {
         // convert to float
-        if (in_array($key, array('amount', 'price', 'total_without_vat', 'total_with_vat', 'total_vat', 'total'), true)) {
+        if (
+            in_array(
+                $key,
+                array('amount', 'price', 'total_without_vat', 'total_with_vat', 'total_vat', 'total'),
+                true
+            )
+        ) {
             $value = (float) $value;
         }
     }
@@ -86,7 +93,7 @@ class DeFactuur
     /**
      * Encode data for usage in the API
      *
-     * @param  mixed $data
+     * @param mixed $data
      */
     private function encodeData($data, array $array = [], ?string $prefix = null): array
     {
@@ -95,7 +102,9 @@ class DeFactuur
         }
 
         foreach ($data as $key => $value) {
-            if($value === null) continue;
+            if ($value === null) {
+                continue;
+            }
 
             $k = isset($prefix) ? $prefix . '[' . $key . ']' : $key;
             if (is_array($value) || is_object($value)) {
@@ -136,7 +145,9 @@ class DeFactuur
         $json = json_decode($response->getBody()->getContents(), true);
 
         // validate json
-        if($json === false) throw new DeFactuurException('Invalid JSON-response');
+        if ($json === false) {
+            throw new DeFactuurException('Invalid JSON-response');
+        }
 
         // decode the response
         array_walk_recursive($json, array(__CLASS__, 'decodeResponse'));
@@ -162,32 +173,34 @@ class DeFactuur
         $parameters['api_key'] = $this->getApiToken();
 
         // through GET
-        if ($method == 'GET') {
+        if ($method === 'GET') {
             // build url
-            $url .= '?' . http_build_query($parameters, null);
+            $url .= '?' . http_build_query($parameters);
             $url = $this->removeIndexFromArrayParameters($url);
-        } elseif ($method == 'POST') {
+        } elseif ($method === 'POST') {
             $data = $this->encodeData($parameters);
 
             if ($this->areWeSendingAFile($data) === false) {
-                $data = http_build_query($data, null);
+                $data = http_build_query($data);
                 $data = $this->removeIndexFromArrayParameters($data);
             }
-        } elseif ($method == 'DELETE') {
+        } elseif ($method === 'DELETE') {
             // build url
             $url .= '?' . http_build_query($parameters, null);
-        } elseif ($method == 'PUT') {
+        } elseif ($method === 'PUT') {
             $data = $this->encodeData($parameters);
             $data = http_build_query($data, null);
             $data = $this->removeIndexFromArrayParameters($data);
-        } else throw new DeFactuurException('Unsupported method (' . $method . ')');
+        } else {
+            throw new DeFactuurException('Unsupported method (' . $method . ')');
+        }
 
         // prepend
         $url = self::API_URL . '/' . self::API_VERSION . '/' . $url;
         $request = $this->requestFactory->createRequest($method, $url);
 
         if ($data !== null) {
-           $request = $request->withBody($this->streamFactory->createStream($data));
+            $request = $request->withBody($this->streamFactory->createStream($data));
         }
 
         try {
@@ -213,11 +226,17 @@ class DeFactuur
                     // errors?
                     if (is_array($json) && array_key_exists('errors', $json)) {
                         $message = '';
-                        foreach ($json['errors'] as $key => $value) $message .= $key . ': ' . implode(', ', $value) . "\n";
-
+                        foreach ($json['errors'] as $key => $value) {
+                            $message .= $key . ': ' . implode(', ', $value) . "\n";
+                        }
+                        throw new DeFactuurException(trim($message));
+                    } elseif (is_array($json) && array_key_exists('error', $json)) {
+                        $message = $json['error'];
                         throw new DeFactuurException(trim($message));
                     } else {
-                        if (is_array($json) && array_key_exists('message', $json)) $message = $json['message'];
+                        if (is_array($json) && array_key_exists('message', $json)) {
+                            $message = $json['message'];
+                        }
                         throw new DeFactuurException($message ?? 'No message', $response->getStatusCode());
                     }
                 }
@@ -226,7 +245,10 @@ class DeFactuur
             }
 
             // unknown error
-            throw new DeFactuurException('Invalid response (' . $response->getStatusCode() . ')', $response->getStatusCode());
+            throw new DeFactuurException(
+                'Invalid response (' . $response->getStatusCode() . ')',
+                $response->getStatusCode()
+            );
         }
 
         return $response;
@@ -317,6 +339,7 @@ class DeFactuur
     }
 
 // account methods
+
     /**
      * Get an API token
      *
@@ -347,13 +370,16 @@ class DeFactuur
         }
 
         // validate json
-        if($json === false || !isset($json['api_token'])) throw new DeFactuurException('Invalid JSON-response');
+        if ($json === false || !isset($json['api_token'])) {
+            throw new DeFactuurException('Invalid JSON-response');
+        }
 
         // return
         return $json['api_token'];
     }
 
 // client methods
+
     /**
      * Get a list of all the clients for the authenticating user.
      *
@@ -381,7 +407,9 @@ class DeFactuur
     public function clientsGet(string $id)
     {
         $rawData = $this->doCallAndReturnData('clients/' . $id . '.json');
-        if(empty($rawData)) return false;
+        if (empty($rawData)) {
+            return false;
+        }
 
         return Client::initializeWithRawData($rawData);
     }
@@ -489,7 +517,25 @@ class DeFactuur
         return $invoices;
     }
 
+    // PEPPOL methods
+
+    public function peppolSearch(string $searchTerm): array
+    {
+        $parameters['q'] = $searchTerm;
+        $results = array();
+        $rawData = $this->doCallAndReturnData('peppol/search', $parameters);
+
+        if (!empty($rawData)) {
+            foreach ($rawData as $data) {
+                $results[] = SearchResult::initializeWithRawData($data);
+            }
+        }
+
+        return $results;
+    }
+
 // invoice methods
+
     /**
      * Get a list of all the invoices.
      *
@@ -508,12 +554,12 @@ class DeFactuur
                 'partially_paid',
                 'unset',
                 'juridicial_proceedings',
-                'late'
+                'late',
             );
 
             array_walk(
                 $filters,
-                function($filter) use ($allowedFilters) {
+                function ($filter) use ($allowedFilters) {
                     if (!in_array($filter, $allowedFilters)) {
                         throw new InvalidArgumentException('Invalid filter');
                     }
@@ -543,7 +589,9 @@ class DeFactuur
     public function invoicesGet(string $id)
     {
         $rawData = $this->doCallAndReturnData('invoices/' . $id . '.json');
-        if(empty($rawData)) return false;
+        if (empty($rawData)) {
+            return false;
+        }
 
         return Invoice::initializeWithRawData($rawData);
     }
@@ -574,7 +622,9 @@ class DeFactuur
     public function invoicesGetByIid(string $iid)
     {
         $rawData = $this->doCallAndReturnData('invoices/by_iid/' . $iid . '.json');
-        if(empty($rawData)) return false;
+        if (empty($rawData)) {
+            return false;
+        }
 
         return Invoice::initializeWithRawData($rawData);
     }
@@ -650,15 +700,40 @@ class DeFactuur
         ?string $text = null
     ) {
         $parameters = array();
-        if($to !== null) $parameters['mail']['to'] = $to;
-        if($cc !== null) $parameters['mail']['cc'] = $cc;
-        if($bcc !== null) $parameters['mail']['bcc'] = $bcc;
-        if($subject !== null) $parameters['mail']['subject'] = $subject;
-        if($text !== null) $parameters['mail']['text'] = $text;
+        if ($to !== null) {
+            $parameters['mail']['to'] = $to;
+        }
+        if ($cc !== null) {
+            $parameters['mail']['cc'] = $cc;
+        }
+        if ($bcc !== null) {
+            $parameters['mail']['bcc'] = $bcc;
+        }
+        if ($subject !== null) {
+            $parameters['mail']['subject'] = $subject;
+        }
+        if ($text !== null) {
+            $parameters['mail']['text'] = $text;
+        }
         $rawData = $this->doCallAndReturnData('invoices/' . $id . '/mails.json', $parameters, 'POST');
-        if(empty($rawData)) return false;
+        if (empty($rawData)) {
+            return false;
+        }
 
         return Mail::initializeWithRawData($rawData);
+    }
+
+    /**
+     * Sending invoice by PEPPOL.
+     *
+     * @throws DeFactuurException
+     */
+    public function invoiceSendByPeppol(string $id): bool
+    {
+        $parameters = array();
+        $rawData = $this->doCallAndReturnStatusCode('invoices/' . $id . '/peppol.json', $parameters, 'POST');
+
+        return $rawData === 204;
     }
 
     /**

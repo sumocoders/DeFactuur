@@ -47,9 +47,15 @@ class Address
     {
         $item = new Address();
 
-        if(isset($data['full_address'])) $item->setFullAddress($data['full_address']);
-        if(isset($data['country'])) $item->setCountry($data['country']);
-        if(isset($data['country_name'])) $item->setCountryName($data['country_name']);
+        if (isset($data['full_address'])) {
+            $item->setFullAddress($data['full_address']);
+        }
+        if (isset($data['country'])) {
+            $item->setCountry($data['country']);
+        }
+        if (isset($data['country_name'])) {
+            $item->setCountryName($data['country_name']);
+        }
 
         return $item;
     }

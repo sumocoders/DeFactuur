@@ -371,14 +371,30 @@ class Invoice
     {
         $item = new Invoice();
 
-        if(isset($data['id'])) $item->setId($data['id']);
-        if(isset($data['client_id'])) $item->setClientId($data['client_id']);
-        if(isset($data['iid'])) $item->setIid($data['iid']);
-        if(isset($data['state'])) $item->setState(new State($data['state']));
-        if(isset($data['payment_method'])) $item->setPaymentMethod($data['payment_method']);
-        if(isset($data['generated'])) $item->setGenerated(new DateTime('@' . strtotime($data['generated'])));
-        if(isset($data['description'])) $item->setDescription($data['description']);
-        if(isset($data['shown_remark'])) $item->setShownRemark($data['shown_remark']);
+        if (isset($data['id'])) {
+            $item->setId($data['id']);
+        }
+        if (isset($data['client_id'])) {
+            $item->setClientId($data['client_id']);
+        }
+        if (isset($data['iid'])) {
+            $item->setIid($data['iid']);
+        }
+        if (isset($data['state'])) {
+            $item->setState(new State($data['state']));
+        }
+        if (isset($data['payment_method'])) {
+            $item->setPaymentMethod($data['payment_method']);
+        }
+        if (isset($data['generated'])) {
+            $item->setGenerated(new DateTime('@' . strtotime($data['generated'])));
+        }
+        if (isset($data['description'])) {
+            $item->setDescription($data['description']);
+        }
+        if (isset($data['shown_remark'])) {
+            $item->setShownRemark($data['shown_remark']);
+        }
         if (isset($data['items'])) {
             foreach ($data['items'] as $row) {
                 $item->addItem(Item::initializeWithRawData($row));
@@ -389,12 +405,24 @@ class Invoice
                 $item->addPayment(Payment::initializeWithRawData($row));
             }
         }
-        if(isset($data['total'])) $item->setTotal($data['total']);
-        if(isset($data['discount'])) $item->setDiscount($data['discount']);
-        if(isset($data['percentage'])) $item->setDiscountIsPercentage($data['percentage']);
-        if(isset($data['discount_description'])) $item->setDiscountDescription($data['discount_description']);
-        if(isset($data['due_date'])) $item->setDueDate(new DateTime('@' . strtotime($data['due_date'])));
-        if(isset($data['fully_paid_at'])) $item->setFullyPaidAt(new DateTime('@' . strtotime($data['fully_paid_at'])));
+        if (isset($data['total'])) {
+            $item->setTotal($data['total']);
+        }
+        if (isset($data['discount'])) {
+            $item->setDiscount($data['discount']);
+        }
+        if (isset($data['percentage'])) {
+            $item->setDiscountIsPercentage($data['percentage']);
+        }
+        if (isset($data['discount_description'])) {
+            $item->setDiscountDescription($data['discount_description']);
+        }
+        if (isset($data['due_date'])) {
+            $item->setDueDate(new DateTime('@' . strtotime($data['due_date'])));
+        }
+        if (isset($data['fully_paid_at'])) {
+            $item->setFullyPaidAt(new DateTime('@' . strtotime($data['fully_paid_at'])));
+        }
         if (isset($data['history'])) {
             foreach ($data['history'] as $row) {
                 $item->addHistory(History::initializeWithRawData($row));

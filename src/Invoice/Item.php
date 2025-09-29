@@ -231,19 +231,45 @@ class Item
             $data['vat'] ?? null
         );
 
-        if(isset($data['description'])) $item->setDescription($data['description']);
-        if(isset($data['amount'])) $item->setAmount($data['amount']);
-        if(isset($data['price'])) $item->setPrice($data['price']);
-        if(isset($data['vat'])) $item->setVat($data['vat']);
-        if(isset($data['reference_id'])) $item->setReferenceId($data['reference_id']);
-        if(isset($data['total_without_vat'])) $item->setTotalWithoutVat($data['total_without_vat']);
-        if(isset($data['total_vat'])) $item->setTotalVat($data['total_vat']);
-        if(isset($data['total_with_vat'])) $item->setTotalWithVat($data['total_with_vat']);
-        if(isset($data['discount'])) $item->setDiscount($data['discount']);
-        if(isset($data['percentage'])) $item->setDiscountIsPercentage($data['percentage']);
-        if(isset($data['discount_description'])) $item->setDiscountDescription($data['discount_description']);
-        if(isset($data['external_product_id'])) $item->setExternalProductId($data['external_product_id']);
-        if(isset($data['product_id'])) $item->setProductId($data['product_id']);
+        if (isset($data['description'])) {
+            $item->setDescription($data['description']);
+        }
+        if (isset($data['amount'])) {
+            $item->setAmount($data['amount']);
+        }
+        if (isset($data['price'])) {
+            $item->setPrice($data['price']);
+        }
+        if (isset($data['vat'])) {
+            $item->setVat($data['vat']);
+        }
+        if (isset($data['reference_id'])) {
+            $item->setReferenceId($data['reference_id']);
+        }
+        if (isset($data['total_without_vat'])) {
+            $item->setTotalWithoutVat($data['total_without_vat']);
+        }
+        if (isset($data['total_vat'])) {
+            $item->setTotalVat($data['total_vat']);
+        }
+        if (isset($data['total_with_vat'])) {
+            $item->setTotalWithVat($data['total_with_vat']);
+        }
+        if (isset($data['discount'])) {
+            $item->setDiscount($data['discount']);
+        }
+        if (isset($data['percentage'])) {
+            $item->setDiscountIsPercentage($data['percentage']);
+        }
+        if (isset($data['discount_description'])) {
+            $item->setDiscountDescription($data['discount_description']);
+        }
+        if (isset($data['external_product_id'])) {
+            $item->setExternalProductId($data['external_product_id']);
+        }
+        if (isset($data['product_id'])) {
+            $item->setProductId($data['product_id']);
+        }
 
         return $item;
     }
