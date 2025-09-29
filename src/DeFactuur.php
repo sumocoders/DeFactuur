@@ -724,6 +724,19 @@ class DeFactuur
     }
 
     /**
+     * Sending invoice by PEPPOL.
+     *
+     * @throws DeFactuurException
+     */
+    public function invoiceSendByPeppol(string $id): bool
+    {
+        $parameters = array();
+        $rawData = $this->doCallAndReturnStatusCode('invoices/' . $id . '/peppol.json', $parameters, 'POST');
+
+        return $rawData === 204;
+    }
+
+    /**
      * Marking invoice as sent by mail.
      *
      * @throws DeFactuurException
