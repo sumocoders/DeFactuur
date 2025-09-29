@@ -229,7 +229,9 @@ class DeFactuur
                         foreach ($json['errors'] as $key => $value) {
                             $message .= $key . ': ' . implode(', ', $value) . "\n";
                         }
-
+                        throw new DeFactuurException(trim($message));
+                    } elseif (is_array($json) && array_key_exists('error', $json)) {
+                        $message = $json['error'];
                         throw new DeFactuurException(trim($message));
                     } else {
                         if (is_array($json) && array_key_exists('message', $json)) {
