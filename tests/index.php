@@ -83,6 +83,8 @@ try {
 //    $invoice->setDescription('Updated by the wrapper class');
 //    $response = $factr->invoicesUpdate(9256, $invoice);
 //    $response = $factr->invoiceSendByMail(5261, 'foo@bar.com');
+//    $response = $factr->invoiceSendByPeppol(5261);
+//    $response = $factr->invoiceMarkAsSentByMail(5261, 'foo@bar.com');
 //    $response = $factr->invoicesAddPayment(5261, $payment);
 //    $response = $factr->invoicesDelete($response->getId());
 } catch (Exception $e) {
