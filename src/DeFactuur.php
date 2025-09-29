@@ -173,21 +173,21 @@ class DeFactuur
         $parameters['api_key'] = $this->getApiToken();
 
         // through GET
-        if ($method == 'GET') {
+        if ($method === 'GET') {
             // build url
             $url .= '?' . http_build_query($parameters);
             $url = $this->removeIndexFromArrayParameters($url);
-        } elseif ($method == 'POST') {
+        } elseif ($method === 'POST') {
             $data = $this->encodeData($parameters);
 
             if ($this->areWeSendingAFile($data) === false) {
                 $data = http_build_query($data);
                 $data = $this->removeIndexFromArrayParameters($data);
             }
-        } elseif ($method == 'DELETE') {
+        } elseif ($method === 'DELETE') {
             // build url
             $url .= '?' . http_build_query($parameters, null);
-        } elseif ($method == 'PUT') {
+        } elseif ($method === 'PUT') {
             $data = $this->encodeData($parameters);
             $data = http_build_query($data, null);
             $data = $this->removeIndexFromArrayParameters($data);
