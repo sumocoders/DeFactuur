@@ -733,7 +733,7 @@ class DeFactuur
         $parameters = array();
         $rawData = $this->doCallAndReturnStatusCode('invoices/' . $id . '/peppol.json', $parameters, 'POST');
 
-        return $rawData === 204;
+        return $rawData === 200;
     }
 
     /**
